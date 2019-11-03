@@ -9,42 +9,35 @@ class CHARACTER:
         self.image = load_image('character.png')
         self.x, self.y = 130, 130
         self.size = 50
-        global velocity,dir, fall
-        velocity = 7
-        fall = -2
-        dir = 1
+        self.velocity, self.fall, self.isJump = 7, -2, False
         self.top, self.bottom, self.left, self.right = self.y + self.size/2, self.y - self.size/2, self.x-self.size/2, self.x+self.size/2
-        global isJump
-        isJump = False
 
     def Jump(self,tiles):
-        global velocity, dir, isJump
-        self.y += velocity
-        velocity -= 0.3
+        self.y += self.velocity
+        self.velocity -= 0.3
         print("jump:")
         print(self.y)
-        if(velocity < 0):
+        if(self.velocity < 0):
             for tile in tiles:
                 if (self.left>=tile.left and self.right < tile.right):
                     if (self.bottom-3<= tile.top+3):
                            self.y = tile.top + self.size/2
-                           isJump = False
-                           velocity = 7
+                           self.isJump = False
+                           self.velocity = 7
                     elif self.left>= tile.left + 10 and self.right > tile.right:
                        if (self.bottom - 3 <= tile.top + 3):
                            self.y = tile.top + self.size / 2
-                           isJump = False
-                           velocity = 7
+                           self.isJump = False
+                           self.velocity = 7
                     elif self.right >= tile.left+10 and self.left<tile.left:
                        if (self.bottom - 3 <= tile.top + 3):
                            self.y = tile.top + self.size / 2
-                           isJump = False
-                           velocity = 7
+                           self.isJump = False
+                           self.velocity = 7
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
 
     def Fall(self,tiles):
-        global fall
         print("fall enter")
         for tile in tiles:
             if (self.left >= tile.left and self.right < tile.right):
@@ -63,7 +56,7 @@ class CHARACTER:
                     self.y = tile.top + self.size / 2
                     return
         self.y += fall
-        fall -=1
+        self.fall -=1
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
         print("fall:")
         print(self.y)
@@ -78,10 +71,11 @@ class CHARACTER:
     def Move(self,tiles):
         test = self.y
         print(test)
-        if(isJump == False):
+        if(self.isJump == False):
             self.Fall(tiles)
-        if(isJump == True):
+        if(self.isJump == True):
             self.Jump(tiles)
 
     def ChangeIsJump(self):
         self.isJump = True
+        print(self.isJump)
