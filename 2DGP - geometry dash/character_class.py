@@ -38,7 +38,7 @@ class CHARACTER:
                            self.y = tile.top + self.size / 2
                            isJump = False
                            velocity = 7
-        self.top, self.bottom, self.left, self.right = self.y + self.size / 2, self.y - self.size / 2, self.x - self.size / 2, self.x + self.size / 2
+        self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
 
     def Fall(self,tiles):
@@ -58,7 +58,7 @@ class CHARACTER:
                     return
         self.y -= fall
         fall -=1
-        self.top, self.bottom, self.left, self.right = self.y + self.size / 2, self.y - self.size / 2, self.x - self.size / 2, self.x + self.size / 2
+        self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
         pass
 
 
@@ -69,6 +69,6 @@ class CHARACTER:
 
     def Move(self,tiles):
         if(isJump == False):
-            Fall(tiles)
+            self.Fall(tiles)
         if(isJump == True):
-            Jump(tiles)
+            self.Jump(tiles)

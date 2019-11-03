@@ -37,9 +37,8 @@ def enter():
     # tile.x, tile.y, tile.size_x, tile.size_y, tile.mode
     # mode : 1. basic_tile  2. tile2
     tiles = []
-    global speed, isJump, real_x
+    global speed, real_x
     speed = 2.8
-    isJump = False
     real_x = 0
     ReadPos()
     pass
@@ -75,17 +74,17 @@ def handle_events():
             if event.key == SDLK_m:
                 game_framework.change_state(maptool_state)
         if event.type == SDL_MOUSEBUTTONDOWN:
-            isJump = True
+            character.isJump = True
     pass
 
 
 def update():
-    global isJump, speed, real_x
+    global speed, real_x
     background.Move(speed)
     character.Move(tiles)
     for obstacle_triangle in obstacles_triangle:
         obstacle_triangle.Move(speed)
-        if(obstacle_triangle.ColideCheck(character_x, character_y,character_size)):
+        if(obstacle_triangle.ColideCheck(character)):
             game_framework.quit()
     for tile in tiles:
         tile.Move(speed)
