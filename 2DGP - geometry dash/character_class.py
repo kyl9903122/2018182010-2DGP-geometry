@@ -68,6 +68,8 @@ class CHARACTER:
         pass
 
     def Move(self,tiles):
+        test = self.y
+        print(test)
         if(isJump == False):
             self.Fall(tiles)
         if(isJump == True):
