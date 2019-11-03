@@ -62,7 +62,7 @@ def resume():
 
 
 def handle_events():
-    global isJump, character
+    global isJump
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -74,7 +74,7 @@ def handle_events():
             if event.key == SDLK_m:
                 game_framework.change_state(maptool_state)
         if event.type == SDL_MOUSEBUTTONDOWN:
-            character.isJump = True
+            character.ChangeIsJump()
     pass
 
 

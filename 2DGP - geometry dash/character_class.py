@@ -82,3 +82,6 @@ class CHARACTER:
             self.Fall(tiles)
         if(isJump == True):
             self.Jump(tiles)
+
+    def ChangeIsJump(self):
+        self.isJump = True
