@@ -37,7 +37,7 @@ class TILE:
     def CheckDie(self,character):
         if self.x>-self.size_x/2 and self.x<1000+self.size_y:
             if(self.ColideCheck(character)):
-                if(character_bottom<bottom):
+                if(character.bottom<self.bottom):
                     return "die"
                 else:
                     return "put"
