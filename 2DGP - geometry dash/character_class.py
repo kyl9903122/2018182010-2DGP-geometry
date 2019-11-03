@@ -21,6 +21,8 @@ class CHARACTER:
         global velocity, dir, isJump
         self.y += velocity
         velocity -= 0.3
+        print("jump:")
+        print(self.y)
         if(velocity < 0):
             for tile in tiles:
                 if (self.left>=tile.left and self.right < tile.right):
@@ -43,22 +45,28 @@ class CHARACTER:
 
     def Fall(self,tiles):
         global fall
+        print("fall enter")
         for tile in tiles:
             if (self.left >= tile.left and self.right < tile.right):
                 if (self.bottom - 3 <= tile.top + 3):
-                    self.y = tile.top - self.size / 2
+                    print("case 1")
+                    self.y = tile.top + self.size / 2
                     return
             elif self.left >= tile.left + 10 and self.right > tile.right:
                 if (self.bottom - 3 <= tile.top + 3):
-                    self.y = tile.top - self.size / 2
+                    print("case 2")
+                    self.y = tile.top + self.size / 2
                     return
             elif self.right >= tile.left + 10 and self.left < tile.left:
                 if (self.bottom - 3 <= tile.top + 3):
-                    self.y = tile.top - self.size / 2
+                    print("case 3")
+                    self.y = tile.top + self.size / 2
                     return
-        self.y -= fall
+        self.y += fall
         fall -=1
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
+        print("fall:")
+        print(self.y)
         pass
 
 
