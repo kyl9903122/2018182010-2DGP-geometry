@@ -7,7 +7,7 @@ degree = 0
 class CHARACTER:
     def __init__(self):
         self.image = load_image('character.png')
-        self.x, self.y = 130, 130
+        self.x, self.y = 130, 500
         self.size = 50
         self.velocity, self.fall, self.isJump = 7, 0, False
         self.top, self.bottom, self.left, self.right = self.y + self.size/2, self.y - self.size/2, self.x-self.size/2, self.x+self.size/2
@@ -32,6 +32,8 @@ class CHARACTER:
                 print("tile.right: ",tile.right)
                 if self.bottom <= tile.top:
                     print("fall stop case1")
+                    print("tile.top: ",tile.top)
+                    print("self.y:", self.y)
                     self.y = tile.top + self.size/2
                     self.fall = 0
                     return
