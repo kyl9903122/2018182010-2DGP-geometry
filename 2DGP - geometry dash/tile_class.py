@@ -20,6 +20,7 @@ class TILE:
     def Draw(self):
         if(self.x>-self.size_x/2 and self.x<1000+self.size_x/2):
             self.image.draw(self.x,self.y,self.size_x,self.size_y)
+            print("tile draw_ tile.y: ",self.y)
         pass
 
     def ColideCheck(self,character):
