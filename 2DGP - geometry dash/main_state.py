@@ -27,7 +27,7 @@ isJump = False
 speed = 0
 degree = 0
 real_x = 0
-stop = False
+stop = 0
 
 def enter():
     global character, background,  tiles, obstacles_triangle
@@ -42,7 +42,7 @@ def enter():
     speed = 2.8
     real_x = 0
     ReadPos()
-    stop = False
+    stop = 0
     pass
 
 
@@ -76,7 +76,7 @@ def handle_events():
             if event.key == SDLK_m:
                 game_framework.change_state(maptool_state)
             if event.key == SDLK_s:
-                stop = True
+                stop += 1
         if event.type == SDL_MOUSEBUTTONDOWN:
             character.ChangeIsJump()
     pass
@@ -84,7 +84,7 @@ def handle_events():
 
 def update():
     global speed, real_x
-    if stop == False:
+    if stop&2 == 0:
         background.Move(speed)
         character.Move(tiles)
         for obstacle_triangle in obstacles_triangle:
