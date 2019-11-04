@@ -101,15 +101,16 @@ def update():
 
 
 def draw():
-    clear_canvas()
-    background.Draw()
-    character.Draw()
-    for obstacle in obstacles_triangle:
-        obstacle.Draw()
-    for tile in tiles:
-        tile.Draw()
-    update_canvas()
-    delay(0.01)
+    if(stop&2 ==0):
+        clear_canvas()
+        background.Draw()
+        character.Draw()
+        for obstacle in obstacles_triangle:
+            obstacle.Draw()
+        for tile in tiles:
+            tile.Draw()
+        update_canvas()
+        delay(0.01)
     pass
 
 

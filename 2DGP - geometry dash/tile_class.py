@@ -9,12 +9,13 @@ class TILE:
         elif(mode == 2):
             self.image = load_image('tile2.png')
         self.x, self.y, self.size_x, self.size_y = x,y,size_x,size_y
-        self.top, self.bottom, self.left, self.right = self.y + self.size_y/2,self.y-self.size_y/2,self.y+self.size_x/2,self.x-self.size_x/2
+        self.top, self.bottom, self.left, self.right = self.y + self.size_y/2,self.y-self.size_y/2,self.x-self.size_x/2,self.x+self.size_x/2
         pass
 
     def Move(self, speed):
         if(self.x>-self.size_x/2):
             self.x -= speed
+            self.left, self.right =  self.x - self.size_x / 2, self.x + self.size_x / 2
         pass
 
     def Draw(self):
