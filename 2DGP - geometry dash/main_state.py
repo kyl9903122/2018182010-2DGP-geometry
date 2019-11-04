@@ -27,6 +27,7 @@ isJump = False
 speed = 0
 degree = 0
 real_x = 0
+stop = False
 
 def enter():
     global character, background,  tiles, obstacles_triangle
@@ -37,10 +38,11 @@ def enter():
     # tile.x, tile.y, tile.size_x, tile.size_y, tile.mode
     # mode : 1. basic_tile  2. tile2
     tiles = []
-    global speed, real_x
+    global speed, real_x, stop
     speed = 2.8
     real_x = 0
     ReadPos()
+    stop = False
     pass
 
 
@@ -62,7 +64,7 @@ def resume():
 
 
 def handle_events():
-    global isJump
+    global stop
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -73,6 +75,8 @@ def handle_events():
                 game_framework.quit()
             if event.key == SDLK_m:
                 game_framework.change_state(maptool_state)
+            if event.key == SDLK_s:
+                stop = True
         if event.type == SDL_MOUSEBUTTONDOWN:
             character.ChangeIsJump()
     pass
@@ -80,18 +84,19 @@ def handle_events():
 
 def update():
     global speed, real_x
-    background.Move(speed)
-    character.Move(tiles)
-    for obstacle_triangle in obstacles_triangle:
-        obstacle_triangle.Move(speed)
-        if(obstacle_triangle.ColideCheck(character)):
-            game_framework.quit()
-    for tile in tiles:
-        tile.Move(speed)
-        if tile.CheckDie(character) == "die":
-            game_framework.quit()
-    speed += 0.0001
-    real_x+=speed
+    if stop == False:
+        background.Move(speed)
+        character.Move(tiles)
+        for obstacle_triangle in obstacles_triangle:
+            obstacle_triangle.Move(speed)
+            if(obstacle_triangle.ColideCheck(character)):
+                game_framework.quit()
+        for tile in tiles:
+            tile.Move(speed)
+            if tile.CheckDie(character) == "die":
+                game_framework.quit()
+        speed += 0.0001
+        real_x+=speed
     pass
 
 

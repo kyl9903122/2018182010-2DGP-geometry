@@ -27,13 +27,16 @@ class CHARACTER:
         print("fall enter")
         for tile in tiles:
             if self.right > tile.left +10 and self.right < tile.right-10:
-                if self.bottom <= tile.bottom:
+                print("self.right: ", self.right)
+                print("tile.left: ",tile.left)
+                print("tile.right: ",tile.right)
+                if self.bottom <= tile.top:
                     print("fall stop case1")
                     self.y = tile.top + self.size/2
                     self.fall = 0
                     return
             elif self.left >= tile.left+10 and self.left <= tile.right and tile.right < self.right:
-                if self.bottom <= tile.bottom:
+                if self.bottom <= tile.top:
                     print("fall stop case2")
                     self.y = tile.top + self.size / 2
                     self.fall = 0
