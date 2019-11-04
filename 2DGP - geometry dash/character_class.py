@@ -19,12 +19,10 @@ class CHARACTER:
         print(self.y)
         if(self.velocity < 0):
             self.isJump, self.velocity = False, 7
-
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
 
     def Fall(self,tiles):
-        print("fall enter")
         for tile in tiles:
             if self.right > tile.left +10 and self.right < tile.right-10:
                 if self.bottom <= tile.top:
@@ -37,7 +35,7 @@ class CHARACTER:
                     self.fall = 0
                     return
         self.y += self.fall
-        self.fall -=0.3
+        self.fall -=0.2
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
         pass
 
@@ -48,8 +46,6 @@ class CHARACTER:
         pass
 
     def Move(self,tiles):
-        test = self.y
-        print(test)
         if(self.isJump == False):
             self.Fall(tiles)
         if(self.isJump == True):

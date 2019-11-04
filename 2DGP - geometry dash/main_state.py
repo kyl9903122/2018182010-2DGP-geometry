@@ -43,6 +43,10 @@ def enter():
     real_x = 0
     ReadPos()
     stop = 0
+    global bgm
+    bgm = load_music("Geometry_resource_backmusic.mp3")
+    bgm.set_volume(64)
+    bgm.repeat_play()
     pass
 
 
