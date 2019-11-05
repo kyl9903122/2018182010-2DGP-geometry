@@ -4,7 +4,6 @@ import main_state
 name = "MaptoolState"
 
 from pico2d import*
-import struct
 
 import background_class
 import tile_class
@@ -129,9 +128,11 @@ def handle_events():
             if event.key == SDLK_s:
                 inspeed = 0
                 stop = True
+                background.StopBgm()
             if event.key == SDLK_r:
                 inspeed = speed
                 stop = False
+                background.StartBgm()
             if event.key == SDLK_m:
                 game_framework.change_state(main_state)
         elif event.type == SDL_MOUSEBUTTONDOWN:

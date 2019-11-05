@@ -25,3 +25,9 @@ class BACKGROUND:
         self.image_1.clip_draw(0, 0, 512, 512, self.pivot_1_x, self.pivot_y, 512, 512)
         self.image_2.clip_draw(0, 0, 512, 512, self.pivot_2_x, self.pivot_y, 512, 512)
         self.image_3.clip_draw(0, 0, 512, 512, self.pivot_3_x, self.pivot_y, 512, 512)
+
+    def StopBgm(self):
+        self.bgm.pause()
+
+    def StartBgm(self):
+        self.bgm.resume()
