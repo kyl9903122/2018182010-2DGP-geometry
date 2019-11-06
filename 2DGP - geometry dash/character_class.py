@@ -39,7 +39,7 @@ class CHARACTER:
         pass
 
     def draw(self):
-        self.image.clip_draw(0, 0, 117, 118, self.x, self.y, self.size, self.size)
+        self.image.clip_draw(0, 0, 117, 118, 130, self.y, self.size, self.size)
         pass
 
     def update(self):
@@ -52,7 +52,8 @@ class CHARACTER:
 
 
     def Move(self):
-        self.x+= self.game_speed
+        self.x = self.moving_degree
+        self.left, self.right = self.x - self.size / 2, self.x + self.size / 2
         if not self.is_death:
             self.Fall()
         if self.is_death:
@@ -89,3 +90,6 @@ class CHARACTER:
                 else:
                     return False
         return False
+
+    def GetCamera_Moving_Degree(self,camera_moving_degree):
+        self.moving_degree = camera_moving_degree
