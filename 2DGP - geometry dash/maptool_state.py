@@ -53,7 +53,7 @@ def enter():
 def exit():
     # 모드를 나갈때 txt파일에 각 장애물, 타일의 pos값을 저장한다.
     f = open('tile_pos.txt', mode='wt')
-    for i in range(0,len(tiles)):
+    for i in range(len(tiles)):
         f.write(str(tile_x[i]))
         f.write('\n')
         f.write(str(tile_y[i]))
@@ -71,6 +71,9 @@ def exit():
     f2.write('end\n')
     f.close()
     f2.close()
+
+    del background
+    del image
 
 def pause():
     pass
@@ -128,11 +131,9 @@ def handle_events():
             if event.key == SDLK_s:
                 inspeed = 0
                 stop = True
-                background.StopBgm()
             if event.key == SDLK_r:
                 inspeed = speed
                 stop = False
-                background.StartBgm()
             if event.key == SDLK_m:
                 game_framework.change_state(main_state)
         elif event.type == SDL_MOUSEBUTTONDOWN:
