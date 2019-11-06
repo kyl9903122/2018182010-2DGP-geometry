@@ -1,62 +1,49 @@
-import random
-import json
-import os
-import title_state
-import maptool_state
-
 from pico2d import *
 
 import game_framework
+import maptool_state
+
 import title_state
 import character_class
 import background_class
 import tile_class
 import obstacle_class
 
-
+WORD_END_X = 24350
 
 name = "MainState"
-
 
 font = None
 character = None
 background = None
 tiles = None
-obstacles_triangle = None
+triangle_obstacles = None
 isJump = False
-speed = 0
+game_speed = 0
 degree = 0
-real_x = 0
+camera_moving_degree_x = 0
 stop = 0
 
-def enter():
-    global character, background,  tiles, obstacles_triangle
-    character = character_class.CHARACTER()
-    background = background_class.BACKGROUND()
-    # obstacle.x, obstacle.y
-    obstacles_triangle = []
-    # tile.x, tile.y, tile.size_x, tile.size_y, tile.mode
-    # mode : 1. basic_tile  2. tile2
-    tiles = []
-    global speed, real_x, stop
-    speed = 2.8
-    real_x = 0
-    ReadPos()
-    stop = 0
-    global bgm
-   #bgm = load_music("Geometry_resource_backmusic.mp3")
-    #bgm.set_volume(64)
-    #bgm.repeat_play()
-    pass
 
+def enter():
+    global character, background, tiles, triangle_obstacles
+    background = background_class.BACKGROUND()
+    triangle_obstacles = []
+    tiles = []
+    character = character_class.CHARACTER()
+    global camera_moving_degree_x, stop, game_speed
+    game_speed = 2.8
+    camera_moving_degree_x = 0
+    ReadPos()
+    character.tiles, character.triangle_obstacles = tiles, triangle_obstacles
+    stop = 0
 
 def exit():
-    global character, background, tiles, obstacles_triangle
+    global character, background, tiles, triangle_obstacles
     del character
     del background
     del tiles
-    del obstacles_triangle
-    pass
+    del triangle_obstacles
 
 
 def pause():
@@ -78,50 +65,52 @@ def handle_events():
                 # 이부분은 이후 일시정지 되도록 바꾼다 -> 추가구현 내용
                 game_framework.quit()
             if event.key == SDLK_m:
+                # maptool 이후 릴리즈때 필요없다
                 game_framework.change_state(maptool_state)
             if event.key == SDLK_s:
+                # 개발자 툴로 이후 릴리즈에는 필요없다
                 stop += 1
         if event.type == SDL_MOUSEBUTTONDOWN:
             character.ChangeIsJump()
-    pass
 
 
 def update():
-    global speed, real_x
-    if stop&2 == 0:
-        background.Move(speed)
-        character.Move(tiles)
-        for obstacle_triangle in obstacles_triangle:
-            obstacle_triangle.Move(speed)
-            if(obstacle_triangle.ColideCheck(character)):
-                game_framework.quit()
+    global game_speed, camera_moving_degree_x
+    if stop & 2 == 0:
+        InputGame_Speed()
+        # background.update 내용
+        background.Move()
+        # tile.update 내용
         for tile in tiles:
-            tile.Move(speed)
-            if tile.CheckDie(character) == "die":
-                game_framework.quit()
-        speed += 0.0001
-        real_x+=speed
-    pass
+            tile.update()
+        # obstacle_triangle.update 내용
+        for obstacle_triangle in triangle_obstacles:
+            obstacle_triangle.update()
+        # character.update 내용
+        character.update()
+        # 시간이 지날수록 속도 빨라지게
+        game_speed += 0.0001
+        # speed 만큼 카메라가 이동하였다.
+        camera_moving_degree_x += game_speed
 
 
 def draw():
-    if(stop&2 ==0):
+    if stop & 2 == 0:
         clear_canvas()
-        background.Draw()
-        character.Draw()
-        for obstacle in obstacles_triangle:
-            obstacle.Draw()
+        background.draw()
+        character.draw()
+        for obstacle in triangle_obstacles:
+            obstacle.draw()
         for tile in tiles:
-            tile.Draw()
+            tile.draw()
         update_canvas()
         delay(0.01)
     pass
 
 
 def ReadPos():
-    f = open('tile_pos.txt',mode = 'rt')
-    #tile pos read
-
+    f = open('tile_pos.txt', mode='rt')
+    # tile pos read
     while True:
         line = f.readline()
         line.strip('\n')
@@ -130,38 +119,39 @@ def ReadPos():
         tile_x = float(line)
         line = f.readline()
         line.strip('\n')
-        if  line == 'end\n' or (not line) or line == '':
+        if line == 'end\n' or (not line) or line == '':
             break
-        tile_y=float(line)
+        tile_y = float(line)
         line = f.readline()
         line.strip('\n')
-        if  line == 'end\n' or not line or line == '':
+        if line == 'end\n' or not line or line == '':
             break
-        tile_mode= int(line)
-        if(tile_mode == 1):
-            tiles.append(tile_class.TILE(tile_x,tile_y,100,100,1))
-        elif (tile_mode == 2):
+        tile_mode = int(line)
+        if tile_mode == 1:
+            tiles.append(tile_class.TILE(tile_x, tile_y, 100, 100, 1))
+        elif tile_mode == 2:
             tiles.append(tile_class.TILE(tile_x, tile_y, 70, 20, 2))
 
-
     f2 = open('triangle_obstacle_pos.txt', mode='rt')
-    #triangle obstacle pos read
+    # triangle obstacle pos read
     while True:
         line = f2.readline()
         line.strip('\n')
         if line == "end\n" or not line or line == '':
             break
-        tri_obs_x= float(line)
+        tri_obs_x = float(line)
         line = f2.readline()
         line.strip('\n')
-        if  line == 'end\n' or not line or line == '':
+        if line == 'end\n' or not line or line == '':
             break
-        tri_obs_y=float(line)
-        obstacles_triangle.append(obstacle_class.OBSTACLE_TRIANGLE(tri_obs_x,tri_obs_y))
+        tri_obs_y = float(line)
+        triangle_obstacles.append(obstacle_class.OBSTACLE_TRIANGLE(tri_obs_x, tri_obs_y))
 
     f.close()
     f2.close()
 
-
-
-
+def InputGame_Speed():
+    background.game_speed = game_speed
+    character.game_speed = game_speed
+    obstacle_class.game_speed = game_speed
+    tile_class.game_speed = game_speed

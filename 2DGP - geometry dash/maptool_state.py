@@ -19,7 +19,7 @@ image = None
 speed, inspeed = 0.28, 0
 stop = True
 tiles, tri_obses = [] , []
-real_x =0
+camera_moving_degree_x =0
 delete_idx = 0
 
 
@@ -32,10 +32,10 @@ def enter():
     global image
     image = load_image('basic_tile.png')
 
-    global x, y, mx, my, size_x,size_y, real_x, stop
+    global x, y, mx, my, size_x,size_y, camera_moving_degree_x, stop
     size_x = 100
     size_y = 100
-    real_x = 0
+    camera_moving_degree_x = 0
     stop = True
 
     global background, speed,inspeed
@@ -72,6 +72,7 @@ def exit():
     f.close()
     f2.close()
 
+    global background, image
     del background
     del image
 
@@ -149,16 +150,17 @@ def handle_events():
 
 
 def update():
-    global speed, real_x, inspeed
+    global speed, camera_moving_degree_x, inspeed,speed
     if(stop == False):
-        background.Move(inspeed)
+        InputGame_Speed()
+        background.Move()
         speed += 0.0001
         inspeed = speed
-        real_x += inspeed
+        camera_moving_degree_x += inspeed
         for tile in tiles:
-            tile.Move(inspeed)
+            tile.update()
         for tri_obs in tri_obses:
-            tri_obs.Move(inspeed)
+            tri_obs.update()
     delay(0.01)
     pass
 
@@ -166,12 +168,12 @@ def update():
 def draw():
     hide_cursor()
     clear_canvas()
-    background.Draw()
+    background.draw()
     image.draw(mx,my,size_x,size_y)
     for tile in tiles:
-        tile.Draw()
+        tile.draw()
     for tri_obs in tri_obses:
-        tri_obs.Draw()
+        tri_obs.draw()
     update_canvas()
 
     pass
@@ -181,21 +183,21 @@ def Create():
     if mode == 't' and kind == 1:
         #basic tile
         tiles.append(tile_class.TILE(x,y,size_x,size_y,1))
-        tile_x.append(x+real_x)
+        tile_x.append(x + camera_moving_degree_x)
         tile_y.append(y)
         tile_mode.append(1)
         delete_idx = "tile"
     elif mode == 't' and kind ==2:
         #tile2
         tiles.append(tile_class.TILE(x , y, size_x, size_y, 2))
-        tile_x.append(x + real_x)
+        tile_x.append(x + camera_moving_degree_x)
         tile_y.append(y)
         tile_mode.append(2)
         delete_idx = "tile"
     elif mode == 'o' and kind == 1:
         #triangle obstacle
         tri_obses.append(obstacle_class.OBSTACLE_TRIANGLE(x,y))
-        tri_obs_x.append(x+real_x)
+        tri_obs_x.append(x + camera_moving_degree_x)
         tri_obs_y.append(y)
         delete_idx = "tri_obs"
 
@@ -262,7 +264,10 @@ def ReadPos():
     f.close()
     f2.close()
 
-
+def InputGame_Speed():
+    background.game_speed = speed
+    obstacle_class.game_speed = speed
+    tile_class.game_speed = speed
 
 
 
