@@ -52,7 +52,7 @@ class CHARACTER:
 
 
     def Move(self):
-        self.x = self.moving_degree
+        self.x = self.moving_degree + 130
         self.left, self.right = self.x - self.size / 2, self.x + self.size / 2
         if not self.is_death:
             self.Fall()

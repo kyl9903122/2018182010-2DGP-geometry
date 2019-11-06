@@ -77,15 +77,9 @@ def handle_events():
 def update():
     global game_speed, camera_moving_degree_x
     if stop & 2 == 0:
-        InputGame_SpeedORCamera_Moveing_Dgree()
+        InputGame_SpeedORCamera_Moveing_Degree()
         # background.update 내용
         background.Move()
-        # tile.update 내용
-        for tile in tiles:
-            tile.update()
-        # obstacle_triangle.update 내용
-        for obstacle_triangle in triangle_obstacles:
-            obstacle_triangle.update()
         # character.update 내용
         character.update()
         # 시간이 지날수록 속도 빨라지게
@@ -150,10 +144,10 @@ def ReadPos():
     f.close()
     f2.close()
 
-def InputGame_SpeedORCamera_Moveing_Dgree():
+def InputGame_SpeedORCamera_Moveing_Degree():
     background.GetGame_Speed(game_speed)
-    character.Get_Camera_Moving_Dgree(camera_moving_degree_x)
+    character.GetCamera_Moving_Degree(camera_moving_degree_x)
     for tile in tiles:
-        tile.Get_Camera_Moving_Dgree(camera_moving_degree_x)
+        tile.GetCamera_Moving_Degree(camera_moving_degree_x)
     for triangle_obstacle in triangle_obstacles:
-        triangle_obstacle.Get_Camera_Moving_Dgree(camera_moving_degree_x)
+        triangle_obstacle.GetCamera_Moving_Degree(camera_moving_degree_x)

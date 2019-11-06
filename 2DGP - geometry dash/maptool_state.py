@@ -152,15 +152,12 @@ def handle_events():
 def update():
     global speed, camera_moving_degree_x, inspeed,speed
     if(stop == False):
+        InputGame_SpeedORCamera_Moveing_Degree()
         InputGame_Speed()
         background.Move()
         speed += 0.0001
         inspeed = speed
         camera_moving_degree_x += inspeed
-        for tile in tiles:
-            tile.update()
-        for tri_obs in tri_obses:
-            tri_obs.update()
     delay(0.01)
     pass
 
@@ -271,3 +268,9 @@ def InputGame_Speed():
 
 
 
+def InputGame_SpeedORCamera_Moveing_Degree():
+    background.GetGame_Speed(inspeed)
+    for tile in tiles:
+        tile.GetCamera_Moving_Degree(camera_moving_degree_x)
+    for triangle_obstacle in tri_obses:
+        triangle_obstacle.GetCamera_Moving_Degree(camera_moving_degree_x)
