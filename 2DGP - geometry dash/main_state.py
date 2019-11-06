@@ -77,15 +77,19 @@ def handle_events():
 def update():
     global game_speed, camera_moving_degree_x
     if stop & 2 == 0:
+        game_speed += 0.0001
+        # speed 만큼 카메라가 이동하였다.
+        camera_moving_degree_x += game_speed
         InputGame_SpeedORCamera_Moveing_Degree()
         # background.update 내용
         background.Move()
         # character.update 내용
         character.update()
         # 시간이 지날수록 속도 빨라지게
-        game_speed += 0.0001
-        # speed 만큼 카메라가 이동하였다.
-        camera_moving_degree_x += game_speed
+        if character.is_death:
+            game_framework.change_state(title_state)
+        #print("character: ", character.is_death)
+
 
 
 def draw():
