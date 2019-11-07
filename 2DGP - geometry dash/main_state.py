@@ -57,7 +57,7 @@ def resume():
 
 
 def handle_events():
-    global stop, temp_speed, down_p_count
+    global stop, temp_speed, down_p_count, game_speed
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -75,13 +75,13 @@ def handle_events():
             if event.key == SDLK_p:
                 down_p_count += 1
                 if down_p_count % 2 == 1:
-                    temp_speed = game_speed;
+                    temp_speed = game_speed
                     game_speed = 10
-                    character.ChageInvincicle_mode(True)
+                    character.ChangeInvincicle_Mode(True)
                 else:
                     game_speed = temp_speed
                     temp_speed = 0
-                    character.ChageInvincicle_mode(False)
+                    character.ChangeInvincicle_Mode(False)
         if event.type == SDL_MOUSEBUTTONDOWN:
             character.ChangeIsJump()
 

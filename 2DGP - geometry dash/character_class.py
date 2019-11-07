@@ -44,19 +44,20 @@ class CHARACTER:
 
     def update(self):
         self.Move()
-        for tile in self.tiles:
-            if self.CheckDeath(tile):
+        if not self.invincicle_mode:
+            for tile in self.tiles:
+                if self.CheckDeath(tile):
+                    if self.is_death:
+                        return
+            for triangle in self.triangle_obstacles:
+                self.ColisionCheckWithTriangleObstcles(triangle)
                 if self.is_death:
                     return
-        for triangle in self.triangle_obstacles:
-            self.ColisionCheckWithTriangleObstcles(triangle)
-            if self.is_death:
-                return
 
     def Move(self):
         self.x = self.moving_degree + 130
+        self.left, self.right = self.x - self.size / 2, self.x + self.size / 2
         if not self.invincicle_mode:
-            self.left, self.right = self.x - self.size / 2, self.x + self.size / 2
             if self.is_jump:
                 self.Jump()
             else:
