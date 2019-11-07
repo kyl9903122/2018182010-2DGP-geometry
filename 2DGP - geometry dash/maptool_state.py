@@ -131,7 +131,7 @@ def handle_events():
                 kind = 3
                 if(mode == 't'):
                     image = load_image('tile3.png')
-                    size_x,size_y = 70,20
+                    size_x, size_y = 70, 20
             if event.key == SDLK_BACKSPACE:
                 DeleteBlock()
             if event.key == SDLK_ESCAPE:
@@ -206,7 +206,7 @@ def Create():
         tile_y.append(y)
         tile_mode.append(2)
         delete_idx = "tile"
-    elif mode == 'tile' and kind == 3:
+    elif mode == 't' and kind == 3:
         # tile3
         tiles.append(tile_class.TILE(x, y, size_x, size_y, 3))
         tile_x.append(x + camera_moving_degree_x)
@@ -260,6 +260,8 @@ def ReadPos():
             tiles.append(tile_class.TILE(tile_x[len(tile_x)-1],tile_y[len(tile_x)-1],100,100,1))
         elif tile_mode[len(tile_mode)-1] == 2:
             tiles.append(tile_class.TILE(tile_x[len(tile_x)-1],tile_y[len(tile_y)-1],70,20,2))
+        elif tile_mode[len(tile_mode)-1] == 3:
+            tiles.append(tile_class.TILE(tile_x[len(tile_x) - 1], tile_y[len(tile_y) - 1], 70, 20, 3))
 
 
 

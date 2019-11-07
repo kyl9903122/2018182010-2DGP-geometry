@@ -140,6 +140,8 @@ def ReadPos():
             tiles.append(tile_class.TILE(tile_x, tile_y, 100, 100, 1))
         elif tile_mode == 2:
             tiles.append(tile_class.TILE(tile_x, tile_y, 70, 20, 2))
+        elif tile_mode == 3:
+            tiles.append(tile_class.TILE(tile_x, tile_y, 70, 20, 3))
 
     f2 = open('triangle_obstacle_pos.txt', mode='rt')
     # triangle obstacle pos read

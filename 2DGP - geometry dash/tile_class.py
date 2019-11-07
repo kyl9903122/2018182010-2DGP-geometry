@@ -9,7 +9,6 @@ class TILE:
 
     def __init__(self, x, y, size_x, size_y, mode):
         # mode에 따라 타일의 모양이 달라진다. 1. basic tile
-        self.image = None
         if TILE.image_1 == None:
             TILE.image_1 = load_image('basic_tile.png')
         if TILE.image_2 == None:
@@ -25,10 +24,10 @@ class TILE:
         if self.left >= self.camera_moving_degree - self.size_x and self.right <= self.camera_moving_degree + 1020 + self.size_x:
             if self.mode == 1:
                 TILE.image_1.draw(self.x - self.camera_moving_degree, self.y, self.size_x, self.size_y)
-            elif self.mode== 2:
+            elif self.mode == 2:
                 TILE.image_2.draw(self.x - self.camera_moving_degree, self.y, self.size_x, self.size_y)
             elif self.mode == 3:
-                TILE.image_3(self.x - self.camera_moving_degree, self.y, self.size_x, self.size_y)
+                TILE.image_3.draw(self.x - self.camera_moving_degree, self.y, self.size_x, self.size_y)
 
 
     def GetCamera_Moving_Degree(self, camera_moving_degree):

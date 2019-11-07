@@ -8,7 +8,7 @@ class CHARACTER:
         self.image = load_image('character.png')
         self.x, self.y = 130, 500
         self.size = 50
-        self.jumping_velocity, self.falling_velocity, self.is_death = 7, 0, False
+        self.jumping_velocity, self.falling_velocity, self.is_death = 8, 0, False
         self.top, self.bottom, self.left, self.right = self.y + self.size / 2, self.y - self.size / 2, self.x - self.size / 2, self.x + self.size / 2
         self.tiles = []
         self.triangle_obstacles = []
@@ -20,18 +20,18 @@ class CHARACTER:
         self.y += self.jumping_velocity
         self.jumping_velocity -= 0.3
         if self.jumping_velocity < 0:
-            self.is_jump, self.jumping_velocity = False, 7
+            self.is_jump, self.jumping_velocity = False, 8
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
     def Fall(self):
         for tile in self.tiles:
-            if tile.left + 10 < self.right < tile.right - 10:
-                if tile.bottom <= self.bottom <= tile.top + 8:
+            if tile.left + 5 < self.right < tile.right - 5:
+                if tile.bottom <= self.bottom <= tile.top+10:
                     self.y = tile.top + self.size / 2
                     self.falling_velocity = 0
                     return
-            elif tile.left + 10 <= self.left <= tile.right < self.right:
-                if tile.bottom <= self.bottom <= tile.top - self.falling_velocity:
+            elif tile.left + 5 <= self.left <= tile.right < self.right:
+                if tile.bottom <= self.bottom <= tile.top+10:
                     self.y = tile.top + self.size / 2
                     self.falling_velocity = 0
                     return
@@ -69,7 +69,7 @@ class CHARACTER:
     def ColisionCheckWithTile(self, tile):
         if self.left >= tile.right:
             return False
-        if self.right <= tile.left:
+        if self.right <= tile.left+2:
             return False
         if self.top <= tile.bottom:
             return False
@@ -89,20 +89,16 @@ class CHARACTER:
     def CheckDeath(self, tile):
         if tile.left > self.moving_degree - tile.size_x and tile.right < self.moving_degree + 1020:
             if self.ColisionCheckWithTile(tile):
-                if not tile.top - 8 <= self.bottom:
+                if tile.mode == 3:
+                    print("die for tile_mode")
                     self.is_death = True
-            if self.ToStepOnRedTile(tile):
-                self.is_death = True
-        return
+                if not (tile.top - 3 <= self.bottom):
+                    print("die for colide with tile")
+                    self.is_death = True
+                    print("tile_top : ", tile.top,"charactr_bot: ", self.bottom, "falling_vel: ", self.falling_velocity)
 
     def GetCamera_Moving_Degree(self, camera_moving_degree):
         self.moving_degree = camera_moving_degree
-
-    def ToStepOnRedTile(self,tile):
-        if tile.left > self.moving_degree - tile.size_x and tile.right < self.moving_degree + 1020:
-            if tile.mode == 3:
-                if self.ColisionCheckWithTile(tile):
-                    return True
 
     def ChangeInvincicle_Mode(self, truth_value):
         self.invincicle_mode = truth_value
