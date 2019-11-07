@@ -88,7 +88,15 @@ class CHARACTER:
             if self.ColisionCheckWithTile(tile):
                 if not tile.top - 8 <= self.bottom:
                     self.is_death = True
+            if self.ToStepOnRedTile(tile):
+                self.is_death = True
         return
 
     def GetCamera_Moving_Degree(self, camera_moving_degree):
         self.moving_degree = camera_moving_degree
+
+    def ToStepOnRedTile(self,tile):
+        if tile.left > self.moving_degree - tile.size_x and tile.right < self.moving_degree + 1020:
+            if tile.mode == 3:
+                if self.ColisionCheckWithTile(tile):
+                    return True
