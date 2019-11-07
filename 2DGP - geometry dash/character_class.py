@@ -49,14 +49,12 @@ class CHARACTER:
                     return
         for triangle in self.triangle_obstacles:
             self.ColisionCheckWithTriangleObstcles(triangle)
-            print("self: ", self.is_death)
             if self.is_death:
                 return
 
 
     def Move(self):
         self.x = self.moving_degree + 130
-        print(self.x)
         self.left, self.right = self.x - self.size / 2, self.x + self.size / 2
         if not self.is_jump:
             self.Fall()
@@ -80,10 +78,6 @@ class CHARACTER:
     def ColisionCheckWithTriangleObstcles(self, triangle):
         if triangle.x - triangle.size / 2 > self.moving_degree - triangle.size and triangle.x + triangle.size < self.moving_degree + 1020:
             dist = (self.x - triangle.x) * (self.x - triangle.x) + (self.y - triangle.y) * (self.y - triangle.y)
-            print("cha_x, cha_y:", self.x, self.y)
-            print("tri_x, tir_y:",triangle.x,triangle.y)
-            print("dist: ",dist)
-            print("r:", (self.size / 2 + triangle.size / 2) * (self.size / 2 + triangle.size / 2))
             if dist < (self.size / 2 + triangle.size / 2) * (self.size / 2 + triangle.size / 2):
                 self.is_death = True
             else:
