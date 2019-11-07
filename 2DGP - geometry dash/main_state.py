@@ -19,10 +19,11 @@ background = None
 tiles = None
 triangle_obstacles = None
 isJump = False
-game_speed = 0
+game_speed, temp_speed = 0, 0
 degree = 0
 camera_moving_degree_x = 0
 stop = 0
+down_p_count = 0
 
 
 def enter():
@@ -37,6 +38,7 @@ def enter():
     ReadPos()
     character.tiles, character.triangle_obstacles = tiles, triangle_obstacles
     stop = 0
+
 
 def exit():
     global character, background, tiles, triangle_obstacles
@@ -55,7 +57,7 @@ def resume():
 
 
 def handle_events():
-    global stop
+    global stop, temp_speed, down_p_count
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
@@ -70,6 +72,16 @@ def handle_events():
             if event.key == SDLK_s:
                 # 개발자 툴로 이후 릴리즈에는 필요없다
                 stop += 1
+            if event.key == SDLK_p:
+                down_p_count += 1
+                if down_p_count % 2 == 1:
+                    temp_speed = game_speed;
+                    game_speed = 10
+                    character.ChageInvincicle_mode(True)
+                else:
+                    game_speed = temp_speed
+                    temp_speed = 0
+                    character.ChageInvincicle_mode(False)
         if event.type == SDL_MOUSEBUTTONDOWN:
             character.ChangeIsJump()
 
@@ -88,8 +100,7 @@ def update():
         # 시간이 지날수록 속도 빨라지게
         if character.is_death:
             game_framework.change_state(title_state)
-        #print("character: ", character.is_death)
-
+        # print("character: ", character.is_death)
 
 
 def draw():
@@ -147,6 +158,7 @@ def ReadPos():
 
     f.close()
     f2.close()
+
 
 def InputGame_SpeedORCamera_Moveing_Degree():
     background.GetGame_Speed(game_speed)

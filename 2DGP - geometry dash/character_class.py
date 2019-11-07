@@ -14,6 +14,7 @@ class CHARACTER:
         self.triangle_obstacles = []
         self.is_jump = False
         self.moving_degree, self.game_speed = 0, 0
+        self.invincicle_mode = False
 
     def Jump(self):
         self.y += self.jumping_velocity
@@ -54,11 +55,12 @@ class CHARACTER:
 
     def Move(self):
         self.x = self.moving_degree + 130
-        self.left, self.right = self.x - self.size / 2, self.x + self.size / 2
-        if self.is_jump:
-            self.Jump()
-        else:
-            self.Fall()
+        if not self.invincicle_mode:
+            self.left, self.right = self.x - self.size / 2, self.x + self.size / 2
+            if self.is_jump:
+                self.Jump()
+            else:
+                self.Fall()
 
     def ChangeIsJump(self):
         self.is_jump = True
@@ -100,3 +102,6 @@ class CHARACTER:
             if tile.mode == 3:
                 if self.ColisionCheckWithTile(tile):
                     return True
+
+    def ChangeInvincicle_Mode(self, truth_value):
+        self.invincicle_mode = truth_value
