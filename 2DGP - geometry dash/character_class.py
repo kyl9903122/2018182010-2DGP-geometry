@@ -25,12 +25,12 @@ class CHARACTER:
     def Fall(self):
         for tile in self.tiles:
             if tile.left + 10 < self.right < tile.right - 10:
-                if self.bottom <= tile.top:
+                if tile.bottom <= self.bottom <= tile.top + 5:
                     self.y = tile.top + self.size / 2
                     self.falling_velocity = 0
                     return
             elif tile.left + 10 <= self.left <= tile.right < self.right:
-                if self.bottom <= tile.top:
+                if tile.bottom <= self.bottom <= tile.top + 5:
                     self.y = tile.top + self.size / 2
                     self.falling_velocity = 0
                     return
@@ -52,26 +52,25 @@ class CHARACTER:
             if self.is_death:
                 return
 
-
     def Move(self):
         self.x = self.moving_degree + 130
         self.left, self.right = self.x - self.size / 2, self.x + self.size / 2
-        if not self.is_jump:
-            self.Fall()
         if self.is_jump:
             self.Jump()
+        else:
+            self.Fall()
 
     def ChangeIsJump(self):
         self.is_jump = True
 
     def ColisionCheckWithTile(self, tile):
-        if self.left <= tile.right:
+        if self.left >= tile.right:
             return False
-        if self.right >= tile.left:
+        if self.right <= tile.left:
             return False
-        if self.top >= tile.bottom:
+        if self.top <= tile.bottom:
             return False
-        if self.bottom <= tile.top:
+        if self.bottom >= tile.top:
             return False
         return True
 
@@ -85,13 +84,11 @@ class CHARACTER:
         return False
 
     def CheckDeath(self, tile):
-        if tile.x - tile.size_x / 2 > self.moving_degree - tile.size_x and tile.x + tile.size_x < self.moving_degree + 1020:
+        if tile.left > self.moving_degree - tile.size_x and tile.right < self.moving_degree + 1020:
             if self.ColisionCheckWithTile(tile):
-                if self.bottom < tile.bottom:
-                    return True
-                else:
-                    return False
-        return False
+                if not tile.top - 3 <= self.bottom:
+                    self.is_death = True
+        return
 
     def GetCamera_Moving_Degree(self, camera_moving_degree):
         self.moving_degree = camera_moving_degree
