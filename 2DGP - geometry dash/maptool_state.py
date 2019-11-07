@@ -27,7 +27,7 @@ def enter():
     global mode, kind
     mode = 't'
     kind = 1
-    global basic_tile_x, basic_tile_y, tile2_x, tile2_y, tri_obs_x, tri_obs_y
+    global tile_x, tile_y, tri_obs_x, tri_obs_y
     tile_x, tile_y, tile_mode, tri_obs_x, tri_obs_y = [], [], [], [], []
     global image
     image = load_image('basic_tile.png')
@@ -100,6 +100,9 @@ def handle_events():
                     image = load_image('tile2.png')
                     size_x = 70
                     size_y = 20
+                elif(kind == 3):
+                    image = load_image('tile3.png')
+                    size_x,size_y = 70,20
             if event.key == SDLK_o:
                 # obstacle selection
                 mode = 'o'
@@ -125,6 +128,9 @@ def handle_events():
                     size_y = 20
             if event.key == SDLK_3:
                 kind = 3
+                if(mode == 't'):
+                    image = load_image('tile3.png')
+                    size_x,size_y = 70,20
             if event.key == SDLK_BACKSPACE:
                 DeleteBlock()
             if event.key == SDLK_ESCAPE:
@@ -190,6 +196,13 @@ def Create():
         tile_x.append(x + camera_moving_degree_x)
         tile_y.append(y)
         tile_mode.append(2)
+        delete_idx = "tile"
+    elif mode == 'tile' and kind == 3:
+        # tile3
+        tiles.append(tile_class.TILE(x, y, size_x, size_y, 3))
+        tile_x.append(x + camera_moving_degree_x)
+        tile_y.append(y)
+        tile_mode.append(3)
         delete_idx = "tile"
     elif mode == 'o' and kind == 1:
         #triangle obstacle

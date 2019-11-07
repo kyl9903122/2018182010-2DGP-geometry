@@ -25,12 +25,12 @@ class CHARACTER:
     def Fall(self):
         for tile in self.tiles:
             if tile.left + 10 < self.right < tile.right - 10:
-                if tile.bottom <= self.bottom <= tile.top + 5:
+                if tile.bottom <= self.bottom <= tile.top + 8:
                     self.y = tile.top + self.size / 2
                     self.falling_velocity = 0
                     return
             elif tile.left + 10 <= self.left <= tile.right < self.right:
-                if tile.bottom <= self.bottom <= tile.top + 5:
+                if tile.bottom <= self.bottom <= tile.top - self.falling_velocity:
                     self.y = tile.top + self.size / 2
                     self.falling_velocity = 0
                     return
@@ -86,7 +86,7 @@ class CHARACTER:
     def CheckDeath(self, tile):
         if tile.left > self.moving_degree - tile.size_x and tile.right < self.moving_degree + 1020:
             if self.ColisionCheckWithTile(tile):
-                if not tile.top - 3 <= self.bottom:
+                if not tile.top - 8 <= self.bottom:
                     self.is_death = True
         return
 
