@@ -16,11 +16,12 @@ mode, kind = 0,0
 tile_x, tile_y, tile_mode, tri_obs_x, tri_obs_y = [], [],[],[],[]
 x, y, mx, my, size_x,size_y = 0,0,0,0,0,0
 image = None
-speed, inspeed = 0.28, 0
+speed, inspeed, temp_speed = 0.28, 0,0
 stop = True
 tiles, tri_obses = [] , []
 camera_moving_degree_x =0
 delete_idx = 0
+down_p_count = 0
 
 
 def enter():
@@ -85,7 +86,7 @@ def resume():
 
 
 def handle_events():
-    global image, size_x, size_y, mx,my,x,y, inspeed, stop, mode, kind
+    global image, size_x, size_y, mx,my,x,y, inspeed, stop, mode, kind, down_p_count, temp_speed, speed
     events = get_events()
     for event in events:
         if event.type == SDL_KEYDOWN:
@@ -143,6 +144,14 @@ def handle_events():
                 stop = False
             if event.key == SDLK_m:
                 game_framework.change_state(main_state)
+            if event.key == SDLK_p:
+                down_p_count += 1
+                if down_p_count % 2 == 1:
+                    temp_speed = speed
+                    speed = 10
+                else:
+                    speed = temp_speed
+                    temp_speed = 0
         elif event.type == SDL_MOUSEBUTTONDOWN:
             x = event.x
             y = 510-event.y -1
