@@ -91,7 +91,7 @@ class CHARACTER:
             if self.ColisionCheckWithTile(tile):
                 if tile.mode == 3:
                     self.is_death = True
-                if not (tile.top - 3 <= self.bottom):
+                if tile.top - 3 > self.bottom:
                     self.is_death = True
             if self.y <= 0:
                 self.is_death = True
