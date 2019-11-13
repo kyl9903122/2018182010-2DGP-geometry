@@ -90,12 +90,11 @@ class CHARACTER:
         if tile.left > self.moving_degree - tile.size_x and tile.right < self.moving_degree + 1020:
             if self.ColisionCheckWithTile(tile):
                 if tile.mode == 3:
-                    print("die for tile_mode")
                     self.is_death = True
                 if not (tile.top - 3 <= self.bottom):
-                    print("die for colide with tile")
                     self.is_death = True
-                    print("tile_top : ", tile.top,"charactr_bot: ", self.bottom, "falling_vel: ", self.falling_velocity)
+            if self.y <= 0:
+                self.is_death = True
 
     def GetCamera_Moving_Degree(self, camera_moving_degree):
         self.moving_degree = camera_moving_degree
