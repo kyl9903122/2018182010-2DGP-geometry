@@ -24,6 +24,9 @@ class CHARACTER:
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
     def Fall(self):
+        self.y += self.falling_velocity
+        self.falling_velocity -= 0.2
+        self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
         for tile in self.tiles:
             if tile.left + 5 < self.right < tile.right - 5:
                 if tile.bottom <= self.bottom <= tile.top+10:
@@ -35,9 +38,6 @@ class CHARACTER:
                     self.y = tile.top + self.size / 2
                     self.falling_velocity = 0
                     return
-        self.y += self.falling_velocity
-        self.falling_velocity -= 0.2
-        self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
     def draw(self):
         self.image.clip_draw(0, 0, 117, 118, 130, self.y, self.size, self.size)
@@ -67,13 +67,13 @@ class CHARACTER:
         self.is_jump = True
 
     def ColisionCheckWithTile(self, tile):
-        if self.left >= tile.right:
+        if self.left > tile.right:
             return False
-        if self.right <= tile.left+2:
+        if self.right < tile.left+2:
             return False
-        if self.top <= tile.bottom:
+        if self.top < tile.bottom:
             return False
-        if self.bottom >= tile.top:
+        if self.bottom > tile.top:
             return False
         return True
 
