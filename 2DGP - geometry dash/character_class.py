@@ -29,12 +29,12 @@ class CHARACTER:
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
         for tile in self.tiles:
             if tile.left + 5 < self.right < tile.right - 5:
-                if tile.bottom <= self.bottom <= tile.top+10:
+                if tile.bottom <= self.bottom <= tile.top+2:
                     self.y = tile.top + self.size / 2
                     self.falling_velocity = 0
                     return
             elif tile.left + 5 <= self.left <= tile.right < self.right:
-                if tile.bottom <= self.bottom <= tile.top+10:
+                if tile.bottom <= self.bottom <= tile.top+2:
                     self.y = tile.top + self.size / 2
                     self.falling_velocity = 0
                     return
