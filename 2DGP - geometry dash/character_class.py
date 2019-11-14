@@ -1,4 +1,5 @@
 from pico2d import *
+import game_framework
 
 # Character Event
 MOUSE_DOWN, MOUSE_UP, INVIHINCLE_KEY = range(3)
@@ -70,7 +71,7 @@ class CHARACTER:
 
 
     def Jump(self):
-        self.y += self.jumping_velocity
+        self.y += self.jumping_velocity *
         self.jumping_velocity -= 0.3
         if self.jumping_velocity < 0:
             self.is_jump, self.jumping_velocity = False, 8

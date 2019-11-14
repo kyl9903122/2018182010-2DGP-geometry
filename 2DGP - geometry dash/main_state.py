@@ -14,6 +14,12 @@ WORD_END_X = 24350
 
 name = "MainState"
 
+PIXEL_PER_METER = (3.0/1.0)
+RUN_SPEED_KMPH = 0.01
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
 font = None
 character = None
 background = None
@@ -34,7 +40,7 @@ def enter():
     tiles = []
     character = character_class.CHARACTER()
     global camera_moving_degree_x, stop, game_speed
-    game_speed = 2.8
+    game_speed = 200.0
     camera_moving_degree_x = 0
     ReadPos()
     character.tiles, character.triangle_obstacles = tiles, triangle_obstacles
@@ -90,9 +96,9 @@ def handle_events():
 def update():
     global game_speed, camera_moving_degree_x
     if stop & 2 == 0:
-        game_speed += 0.0001
+        game_speed += RUN_SPEED_PPS
         # speed 만큼 카메라가 이동하였다.
-        camera_moving_degree_x += game_speed
+        camera_moving_degree_x += game_speed * game_framework.frame_time
         InputGame_SpeedORCamera_Moveing_Degree()
         # 시간이 지날수록 속도 빨라지게
         for game_object in game_world.all_objects():
@@ -157,7 +163,7 @@ def ReadPos():
 
 
 def InputGame_SpeedORCamera_Moveing_Degree():
-    background.GetGame_Speed(game_speed)
+    background.GetGame_Speed(game_speed*game_framework.frame_time)
     character.GetCamera_Moving_Degree(camera_moving_degree_x)
     for tile in tiles:
         tile.GetCamera_Moving_Degree(camera_moving_degree_x)
