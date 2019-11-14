@@ -29,6 +29,9 @@ class TILE:
             elif self.mode == 3:
                 TILE.image_3.draw(self.x - self.camera_moving_degree, self.y, self.size_x, self.size_y)
 
+    def update(self):
+        pass
+
 
     def GetCamera_Moving_Degree(self, camera_moving_degree):
         self.camera_moving_degree = camera_moving_degree

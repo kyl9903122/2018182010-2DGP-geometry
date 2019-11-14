@@ -2,6 +2,7 @@ from pico2d import *
 
 import game_framework
 import maptool_state
+import game_world
 
 import title_state
 import character_class
@@ -38,14 +39,14 @@ def enter():
     ReadPos()
     character.tiles, character.triangle_obstacles = tiles, triangle_obstacles
     stop = 0
+    game_world.add_object(background, 0)
+    game_world.add_object(character, 1)
+    game_world.add_objects(tiles, 1)
+    game_world.add_objects(triangle_obstacles, 1)
 
 
 def exit():
-    global character, background, tiles, triangle_obstacles
-    del character
-    del background
-    del tiles
-    del triangle_obstacles
+    game_world.clear()
 
 
 def pause():
@@ -77,11 +78,11 @@ def handle_events():
                 if down_p_count % 2 == 1:
                     temp_speed = game_speed
                     game_speed = 10
-                    character.hadle_event(event)
+                    character.handle_event(event)
                 else:
                     game_speed = temp_speed
                     temp_speed = 0
-                    character.hadle_event(event)
+                    character.handle_event(event)
         else:
             character.handle_event(event)
 
@@ -93,25 +94,18 @@ def update():
         # speed 만큼 카메라가 이동하였다.
         camera_moving_degree_x += game_speed
         InputGame_SpeedORCamera_Moveing_Degree()
-        # background.update 내용
-        background.Move()
-        # character.update 내용
-        character.update()
         # 시간이 지날수록 속도 빨라지게
+        for game_object in game_world.all_objects():
+            game_object.update()
         if character.is_death:
             game_framework.change_state(title_state)
-        # print("character: ", character.is_death)
 
 
 def draw():
     if stop & 2 == 0:
         clear_canvas()
-        background.draw()
-        character.draw()
-        for obstacle in triangle_obstacles:
-            obstacle.draw()
-        for tile in tiles:
-            tile.draw()
+        for game_object in game_world.all_objects():
+            game_object.draw()
         update_canvas()
         delay(0.01)
     pass
