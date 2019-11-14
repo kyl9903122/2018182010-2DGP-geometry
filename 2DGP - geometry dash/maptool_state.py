@@ -9,9 +9,8 @@ import background_class
 import tile_class
 import obstacle_class
 
-
-
 background = None
+home = None
 mode, kind = 0,0
 tile_x, tile_y, tile_mode, tri_obs_x, tri_obs_y = [], [],[],[],[]
 x, y, mx, my, size_x,size_y = 0,0,0,0,0,0

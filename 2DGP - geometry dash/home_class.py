@@ -11,7 +11,7 @@ class HOME:
     def draw(self):
         if self.left >= self.camera_moving_degree - self.size_x and self.right <= self.camera_moving_degree + 1020 + self.size_x:
             if self.mode == 1:
-                self..image_1.draw(self.x - self.camera_moving_degree, self.y, self.size_x, self.size_y)
+                self.image_1.draw(self.x - self.camera_moving_degree, self.y, self.size_x, self.size_y)
             elif self.mode == 2:
                 self.image_2.draw(self.x - self.camera_moving_degree, self.y, self.size_x, self.size_y)
             elif self.mode == 3:

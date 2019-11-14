@@ -1,6 +1,55 @@
 from pico2d import *
-import main_state
-import tile_class
+
+# Character Event
+MOUSE_DOWN, MOUSE_UP, INVIHINCLE_KEY = range(3)
+
+key_event_table = {
+    (SDL_MOUSEBUTTONDOWN, None): MOUSE_DOWN,
+    (SDL_MOUSEBUTTONUP, None): MOUSE_UP,
+    (SDL_KEYDOWN, SDLK_p): INVIHINCLE_KEY
+}
+
+
+class State1_State:
+    @staticmethod
+    def enter(character, event):
+        if event == MOUSE_DOWN:
+            character.is_jump = True
+        elif event == INVIHINCLE_KEY:
+            if character.invincicle_mode:
+                character.invincicle_mode = False
+            else:
+                character.invincicle_mode = True
+        pass
+
+    @staticmethod
+    def exit(character, event):
+        pass
+
+    @staticmethod
+    def do(character):
+        print("State1 State do")
+        character.Move()
+        if not character.invincicle_mode:
+            for tile in character.tiles:
+                if character.CheckDeath(tile):
+                    if character.is_death:
+                        return
+            for triangle in character.triangle_obstacles:
+                character.ColisionCheckWithTriangleObstcles(triangle)
+                if character.is_death:
+                    return
+        pass
+
+    @staticmethod
+    def draw(character):
+        character.image.clip_draw(0, 0, 117, 118, 130, character.y, character.size, character.size)
+        pass
+
+
+next_state_table = {
+    State1_State: {MOUSE_DOWN: State1_State, MOUSE_UP: State1_State, INVIHINCLE_KEY: State1_State}
+}
 
 
 class CHARACTER:
@@ -15,6 +64,10 @@ class CHARACTER:
         self.is_jump = False
         self.moving_degree, self.game_speed = 0, 0
         self.invincicle_mode = False
+        self.event_que = []
+        self.cur_state = State1_State
+        self.cur_state.enter(self, None)
+
 
     def Jump(self):
         self.y += self.jumping_velocity
@@ -29,30 +82,35 @@ class CHARACTER:
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
         for tile in self.tiles:
             if tile.left + 5 < self.right < tile.right - 5:
-                if tile.bottom <= self.bottom <= tile.top+2:
+                if tile.bottom <= self.bottom <= tile.top + 2:
                     self.y = tile.top + self.size / 2
                     self.falling_velocity = 0
                     return
             elif tile.left + 5 <= self.left <= tile.right < self.right:
-                if tile.bottom <= self.bottom <= tile.top+2:
+                if tile.bottom <= self.bottom <= tile.top + 2:
                     self.y = tile.top + self.size / 2
                     self.falling_velocity = 0
                     return
 
     def draw(self):
-        self.image.clip_draw(0, 0, 117, 118, 130, self.y, self.size, self.size)
+        self.cur_state.draw(self)
 
     def update(self):
-        self.Move()
-        if not self.invincicle_mode:
-            for tile in self.tiles:
-                if self.CheckDeath(tile):
-                    if self.is_death:
-                        return
-            for triangle in self.triangle_obstacles:
-                self.ColisionCheckWithTriangleObstcles(triangle)
-                if self.is_death:
-                    return
+        self.cur_state.do(self)
+        if len(self.event_que) > 0:
+            event = self.event_que.pop()
+            self.cur_state.exit(self,event)
+            self.cur_state = next_state_table[self.cur_state][event]
+            self.cur_state.enter(self,event)
+
+    def add_event(self,event):
+        self.event_que.insert(0,event)
+
+    def handle_event(self,event):
+        if(event.type,event.key) in key_event_table:
+            key_event = key_event_table[(event.type,event.key)]
+            self.add_event(key_event)
+
 
     def Move(self):
         self.x = self.moving_degree + 130
@@ -63,13 +121,10 @@ class CHARACTER:
             else:
                 self.Fall()
 
-    def ChangeIsJump(self):
-        self.is_jump = True
-
     def ColisionCheckWithTile(self, tile):
         if self.left > tile.right:
             return False
-        if self.right < tile.left+2:
+        if self.right < tile.left + 2:
             return False
         if self.top < tile.bottom:
             return False
@@ -95,12 +150,10 @@ class CHARACTER:
                 if tile.bottom > self.bottom:
                     self.is_death = True
                     print("die for collision with tile")
-                    print(self.bottom,self.bottom)
+                    print(self.bottom, self.bottom)
             if self.y <= 0:
                 self.is_death = True
 
     def GetCamera_Moving_Degree(self, camera_moving_degree):
         self.moving_degree = camera_moving_degree
 
-    def ChangeInvincicle_Mode(self, truth_value):
-        self.invincicle_mode = truth_value

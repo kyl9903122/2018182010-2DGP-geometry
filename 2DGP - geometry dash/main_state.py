@@ -77,13 +77,13 @@ def handle_events():
                 if down_p_count % 2 == 1:
                     temp_speed = game_speed
                     game_speed = 10
-                    character.ChangeInvincicle_Mode(True)
+                    character.hadle_event(event)
                 else:
                     game_speed = temp_speed
                     temp_speed = 0
-                    character.ChangeInvincicle_Mode(False)
-        if event.type == SDL_MOUSEBUTTONDOWN:
-            character.ChangeIsJump()
+                    character.hadle_event(event)
+        else:
+            character.handle_event(event)
 
 
 def update():
