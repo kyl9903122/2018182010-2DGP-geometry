@@ -91,8 +91,11 @@ class CHARACTER:
             if self.ColisionCheckWithTile(tile):
                 if tile.mode == 3:
                     self.is_death = True
-                if tile.top - 3 > self.bottom:
+                    print("die for tile mode 3")
+                if tile.bottom > self.bottom:
                     self.is_death = True
+                    print("die for collision with tile")
+                    print(self.bottom,self.bottom)
             if self.y <= 0:
                 self.is_death = True
 
