@@ -20,11 +20,14 @@ def remove_object(obj):
 
 
 def clear():
+    global objects
     for obj in all_objects():
         del obj
-
+    objects.clear()
+    objects = [[], []]
 
 def all_objects():
     for i in range(len(objects)):
         for obj in objects[i]:
             yield obj
+

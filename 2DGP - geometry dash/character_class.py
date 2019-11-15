@@ -58,7 +58,7 @@ class CHARACTER:
         self.image = load_image('character.png')
         self.x, self.y = 130, 500
         self.size = 50
-        self.jumping_velocity, self.falling_velocity, self.is_death = 8, 0, False
+        self.jumping_velocity, self.falling_velocity, self.is_death = 650, 0, False
         self.top, self.bottom, self.left, self.right = self.y + self.size / 2, self.y - self.size / 2, self.x - self.size / 2, self.x + self.size / 2
         self.tiles = []
         self.triangle_obstacles = []
@@ -71,15 +71,15 @@ class CHARACTER:
 
 
     def Jump(self):
-        self.y += self.jumping_velocity *
-        self.jumping_velocity -= 0.3
+        self.y += self.jumping_velocity * game_framework.frame_time
+        self.jumping_velocity -= 30
         if self.jumping_velocity < 0:
-            self.is_jump, self.jumping_velocity = False, 8
+            self.is_jump, self.jumping_velocity = False, 650
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
     def Fall(self):
-        self.y += self.falling_velocity
-        self.falling_velocity -= 0.2
+        self.y += self.falling_velocity * game_framework.frame_time
+        self.falling_velocity -= 15
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
         for tile in self.tiles:
             if tile.left + 5 < self.right < tile.right - 5:
