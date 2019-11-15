@@ -66,7 +66,7 @@ class Stop_State:
             character.jumping_velocity = 400
             character.falling_velocity = 0
         global timer
-        timer = 5
+        timer = 3
         pass
 
     @staticmethod
