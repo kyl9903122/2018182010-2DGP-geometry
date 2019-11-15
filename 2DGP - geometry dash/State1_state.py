@@ -10,9 +10,9 @@ import background_class
 import tile_class
 import obstacle_class
 
-WORD_END_X = 24350
+name = "State1 state"
 
-name = "MainState"
+WORD_END_X = 7440.704599999951
 
 PIXEL_PER_METER = (3.0/1.0)
 RUN_SPEED_KMPH = 0.01
@@ -31,6 +31,7 @@ degree = 0
 camera_moving_degree_x = 0
 stop = 0
 down_p_count = 0
+map_stop = False
 
 
 def enter():
@@ -39,9 +40,11 @@ def enter():
     triangle_obstacles = []
     tiles = []
     character = character_class.CHARACTER()
-    global camera_moving_degree_x, stop, game_speed
-    game_speed = 200.0
+    character.stage = 1
+    global camera_moving_degree_x, stop, game_speed, map_stop
+    game_speed = 250.0
     camera_moving_degree_x = 0
+    map_stop = False
     ReadPos()
     character.tiles, character.triangle_obstacles = tiles, triangle_obstacles
     stop = 0
@@ -83,7 +86,7 @@ def handle_events():
                 down_p_count += 1
                 if down_p_count % 2 == 1:
                     temp_speed = game_speed
-                    game_speed = 10
+                    game_speed = 800
                     character.handle_event(event)
                 else:
                     game_speed = temp_speed
@@ -94,11 +97,13 @@ def handle_events():
 
 
 def update():
-    global game_speed, camera_moving_degree_x
+    global game_speed, camera_moving_degree_x, map_stop
     if stop & 2 == 0:
         game_speed += RUN_SPEED_PPS
         # speed 만큼 카메라가 이동하였다.
         camera_moving_degree_x += game_speed * game_framework.frame_time
+        if camera_moving_degree_x >= WORD_END_X-980:
+            map_stop = True
         InputGame_SpeedORCamera_Moveing_Degree()
         # 시간이 지날수록 속도 빨라지게
         for game_object in game_world.all_objects():
@@ -163,9 +168,13 @@ def ReadPos():
 
 
 def InputGame_SpeedORCamera_Moveing_Degree():
-    background.GetGame_Speed(game_speed*game_framework.frame_time)
     character.GetCamera_Moving_Degree(camera_moving_degree_x)
-    for tile in tiles:
-        tile.GetCamera_Moving_Degree(camera_moving_degree_x)
-    for triangle_obstacle in triangle_obstacles:
-        triangle_obstacle.GetCamera_Moving_Degree(camera_moving_degree_x)
+    background.GetGame_Speed(game_speed * game_framework.frame_time)
+    if not map_stop:
+        for tile in tiles:
+            tile.GetCamera_Moving_Degree(camera_moving_degree_x)
+        for triangle_obstacle in triangle_obstacles:
+            triangle_obstacle.GetCamera_Moving_Degree(camera_moving_degree_x)
+    if map_stop:
+        background.GetGame_Speed(0)
+        character.map_stop = True

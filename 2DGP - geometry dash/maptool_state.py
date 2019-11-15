@@ -1,5 +1,5 @@
 import game_framework
-import main_state
+import State1_state
 
 name = "MaptoolState"
 
@@ -142,7 +142,7 @@ def handle_events():
                 inspeed = speed
                 stop = False
             if event.key == SDLK_m:
-                game_framework.change_state(main_state)
+                game_framework.change_state(State1_state)
             if event.key == SDLK_p:
                 down_p_count += 1
                 if down_p_count % 2 == 1:

@@ -1,8 +1,12 @@
 from pico2d import *
 import game_framework
+import title_state
+
+GOAL_POINT = 7190
+WORD_END_X = 7440.704599999951
 
 # Character Event
-MOUSE_DOWN, MOUSE_UP, INVIHINCLE_KEY = range(3)
+MOUSE_DOWN, MOUSE_UP, INVIHINCLE_KEY, FINISH_STAGE = range(4)
 
 key_event_table = {
     (SDL_MOUSEBUTTONDOWN, None): MOUSE_DOWN,
@@ -31,6 +35,9 @@ class State1_State:
     def do(character):
         print("State1 State do")
         character.Move()
+        if character.x >= GOAL_POINT:
+            character.cur_state = Stop_State
+            character.cur_state.enter(character,FINISH_STAGE)
         if not character.invincicle_mode:
             for tile in character.tiles:
                 if character.CheckDeath(tile):
@@ -44,12 +51,52 @@ class State1_State:
 
     @staticmethod
     def draw(character):
-        character.image.clip_draw(0, 0, 117, 118, 130, character.y, character.size, character.size)
+        if character.map_stop:
+            character.image.clip_draw(0, 0, 117, 118, character.x - 6541 + 130, character.y, character.size,
+                                      character.size)
+        else:
+            character.image.clip_draw(0, 0, 117, 118, 130, character.y, character.size, character.size)
+
+
+class Stop_State:
+    @staticmethod
+    def enter(character, event):
+        if event == FINISH_STAGE:
+            character.is_jump = True
+            character.jumping_velocity = 400
+            character.falling_velocity = 0
+        global timer
+        timer = 5
         pass
+
+    @staticmethod
+    def exit(character, event):
+        pass
+
+    @staticmethod
+    def do(character):
+        global timer
+        timer -= game_framework.frame_time
+        if timer<=0:
+            game_framework.change_state(title_state)
+        if character.is_jump:
+            character.Jump()
+        else:
+            character.jumping_velocity = 400
+            character.Fall()
+            if character.bottom <= 100:
+                character.y = 100+character.size/2
+                character.is_jump = True
+                character.falling_velocity = 0
+        pass
+
+    @staticmethod
+    def draw(character):
+        character.image.clip_draw(0, 0, 117, 118, character.x - 6541 + 130, character.y, character.size, character.size)
 
 
 next_state_table = {
-    State1_State: {MOUSE_DOWN: State1_State, MOUSE_UP: State1_State, INVIHINCLE_KEY: State1_State}
+    State1_State: {MOUSE_DOWN: State1_State, MOUSE_UP: State1_State, INVIHINCLE_KEY: State1_State,FINISH_STAGE: Stop_State}
 }
 
 
@@ -59,14 +106,18 @@ class CHARACTER:
         self.x, self.y = 130, 500
         self.size = 50
         self.jumping_velocity, self.falling_velocity, self.is_death = 650, 0, False
+        self.map_stop = 0
         self.top, self.bottom, self.left, self.right = self.y + self.size / 2, self.y - self.size / 2, self.x - self.size / 2, self.x + self.size / 2
         self.tiles = []
         self.triangle_obstacles = []
         self.is_jump = False
         self.moving_degree, self.game_speed = 0, 0
         self.invincicle_mode = False
+        self.stage = 0
         self.event_que = []
         self.cur_state = State1_State
+        if self.stage == 1:
+            self.cur_state = State1_State
         self.cur_state.enter(self, None)
 
 
