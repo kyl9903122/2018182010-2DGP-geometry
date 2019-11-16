@@ -127,9 +127,11 @@ class Fly_State:
         character.left, character.right = character.x - character.size / 2, character.x + character.size / 2
         character.y = character.ufo.y + 35
         character.top, character.bottom = character.y + character.size / 2, character.y - character.size / 2
-        for obstace in character.obstacles:
-            if character.ColideCheck(obstace):
+        for obstacle in character.obstacles:
+            if character.ColisionCheckWithTile(obstacle):
+                print("chracter_colide fly: ", character.x, " ", obstacle.x)
                 character.is_death = True
+                break
         if character.top >= 510:
             character.is_death = True
         pass

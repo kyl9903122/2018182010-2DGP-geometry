@@ -32,9 +32,7 @@ class Stop_State:
 class Fly_State:
     @staticmethod
     def enter(ufo, event):
-        print("ufo: ",event)
         if event == MOUSE_DOWN:
-            print("ufo mouse down")
             ufo.fly = True
             ufo.velocity = 0
         elif event == MOUSE_UP:
@@ -56,9 +54,11 @@ class Fly_State:
         else:
             print("ufo down")
             ufo.Fall()
-        for obstace in ufo.obstacles:
-            if ufo.ColideCheck(obstace):
+        for obstacle in ufo.obstacles:
+            if ufo.ColideCheck(obstacle):
+                print("collide ufo: ",ufo.x," ",obstacle.x)
                 ufo.collide = True
+                break
         if ufo.bottom <= 0:
             ufo.collide = True
 

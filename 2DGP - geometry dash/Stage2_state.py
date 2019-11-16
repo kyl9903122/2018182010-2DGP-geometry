@@ -53,9 +53,9 @@ def enter():
     stop = 0
     game_world.add_object(background, 0)
     game_world.add_object(character, 1)
-    game_world.add_object(ufo,1)
+    game_world.add_object(ufo, 1)
     game_world.add_objects(tiles, 1)
-    game_world.add_objects(rectangle_obstacles,1)
+    game_world.add_objects(rectangle_obstacles, 1)
 
 
 def exit():
@@ -156,18 +156,25 @@ def ReadPos():
         if line == "end\n" or not line or line == '':
             break
         rect_obs_x = float(line)
+
         line = f2.readline()
         line.strip('\n')
         if line == 'end\n' or not line or line == '':
             break
         rect_obs_y = float(line)
+
         line = f2.readline()
         line.strip('\n')
         if line == "end\n" or not line or line == '':
             break
         rect_obs_size = float(line)
 
-        rectangle_obstacles.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(rect_obs_x, rect_obs_y, rect_obs_size))
+        line = f2.readline()
+        line.strip('\n')
+        if line == "end\n" or not line or line == '':
+            break
+        mode = int(line)
+        rectangle_obstacles.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(rect_obs_x, rect_obs_y, rect_obs_size, mode))
 
     f.close()
     f2.close()
