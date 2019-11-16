@@ -50,7 +50,7 @@ class Run_State:
                 if character.CheckDeath(tile):
                     if character.is_death:
                         return
-            for triangle in character.triangle_obstacles:
+            for triangle in character.obstacles:
                 character.ColisionCheckWithTriangleObstcles(triangle)
                 if character.is_death:
                     return
@@ -130,6 +130,8 @@ class Fly_State:
         for obstace in character.obstacles:
             if character.ColideCheck(obstace):
                 character.is_death = True
+        if character.top >= 510:
+            character.is_death = True
         pass
 
     @staticmethod
@@ -153,7 +155,7 @@ class CHARACTER:
         self.map_stop = 0
         self.top, self.bottom, self.left, self.right = self.y + self.size / 2, self.y - self.size / 2, self.x - self.size / 2, self.x + self.size / 2
         self.tiles = []
-        self.triangle_obstacles = []
+        self.obstacles = []
         self.is_jump = False
         self.moving_degree= 0
         self.invincicle_mode = False

@@ -46,7 +46,7 @@ def enter():
     camera_moving_degree_x = 0
     map_stop = False
     ReadPos()
-    character.tiles, character.triangle_obstacles = tiles, triangle_obstacles
+    character.tiles, character.obstacles = tiles, triangle_obstacles
     stop = 0
     game_world.add_object(background, 0)
     game_world.add_object(character, 1)

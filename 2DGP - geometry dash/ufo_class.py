@@ -59,6 +59,8 @@ class Fly_State:
         for obstace in ufo.obstacles:
             if ufo.ColideCheck(obstace):
                 ufo.collide = True
+        if ufo.bottom <= 0:
+            ufo.collide = True
 
     @staticmethod
     def draw(ufo):

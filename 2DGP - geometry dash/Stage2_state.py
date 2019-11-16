@@ -46,8 +46,10 @@ def enter():
     map_stop = False
     ReadPos()
     character.tiles = tiles
+    character.obstacles = rectangle_obstacles
     character.ufo = ufo
     ufo.tiles = tiles
+    ufo.obstacles = rectangle_obstacles
     stop = 0
     game_world.add_object(background, 0)
     game_world.add_object(character, 1)
@@ -116,7 +118,7 @@ def update():
         # 시간이 지날수록 속도 빨라지게
         for game_object in game_world.all_objects():
             game_object.update()
-        if character.is_death or ufo.coliide:
+        if character.is_death or ufo.collide:
             game_framework.change_state(title_state)
 
 
