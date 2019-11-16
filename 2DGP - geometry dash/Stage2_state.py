@@ -1,30 +1,30 @@
 from pico2d import *
 
 import game_framework
-import maptool_state
+import maptool2_state
 import game_world
 
 import title_state
 import character_class
 import background_class
 import tile_class
-import obstacle_class
+import rectangle_obstacle_class
+
+
 
 name = "Stage2 State"
 
+# 맵이 완성된 후 값을 바꿔준다
 WORD_END_X = 7440.704599999951
 
-PIXEL_PER_METER = (3.0/1.0)
+PIXEL_PER_METER = (3.0 / 1.0)
 RUN_SPEED_KMPH = 0.01
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 font = None
-character = None
-background = None
-tiles = None
-triangle_obstacles = None
+character, background, tiles, rectangle_obstacles = None, None, None, None
 isJump = False
 game_speed, temp_speed = 0, 0
 degree = 0
@@ -35,13 +35,13 @@ map_stop = False
 
 
 def enter():
-    global character, background, tiles, triangle_obstacles
+    global character, background, tiles, rectangle_obstacles
     background = background_class.BACKGROUND()
-    tiles = []
+    tiles, rectangle_obstacles = [], []
     character = character_class.CHARACTER()
     character.stage = 1
     global camera_moving_degree_x, stop, game_speed, map_stop
-    game_speed = 250.0
+    game_speed = 270.0
     camera_moving_degree_x = 0
     map_stop = False
     ReadPos()
@@ -76,7 +76,7 @@ def handle_events():
                 game_framework.quit()
             if event.key == SDLK_m:
                 # maptool 이후 릴리즈때 필요없다
-                game_framework.change_state(maptool_state)
+                game_framework.change_state(maptool2_state)
             if event.key == SDLK_s:
                 # 개발자 툴로 이후 릴리즈에는 필요없다
                 stop += 1
@@ -100,7 +100,7 @@ def update():
         game_speed += RUN_SPEED_PPS
         # speed 만큼 카메라가 이동하였다.
         camera_moving_degree_x += game_speed * game_framework.frame_time
-        if camera_moving_degree_x >= WORD_END_X-980:
+        if camera_moving_degree_x >= WORD_END_X - 980:
             map_stop = True
         InputGame_SpeedORCamera_Moveing_Degree()
         # 시간이 지날수록 속도 빨라지게
@@ -121,7 +121,7 @@ def draw():
 
 
 def ReadPos():
-    f = open('tile_pos.txt', mode='rt')
+    f = open('stage2_tile_pos.txt', mode='rt')
     # tile pos read
     while True:
         line = f.readline()
@@ -146,20 +146,26 @@ def ReadPos():
         elif tile_mode == 3:
             tiles.append(tile_class.TILE(tile_x, tile_y, 70, 20, 3))
 
-    f2 = open('triangle_obstacle_pos.txt', mode='rt')
+    f2 = open('rect_obs_pos.txt', mode='rt')
     # rectangle obstacle pos read
     while True:
         line = f2.readline()
         line.strip('\n')
         if line == "end\n" or not line or line == '':
             break
-        tri_obs_x = float(line)
+        rect_obs_x = float(line)
         line = f2.readline()
         line.strip('\n')
         if line == 'end\n' or not line or line == '':
             break
-        tri_obs_y = float(line)
-        triangle_obstacles.append(obstacle_class.OBSTACLE_TRIANGLE(tri_obs_x, tri_obs_y))
+        rect_obs_y = float(line)
+        line = f2.readline()
+        line.strip('\n')
+        if line == "end\n" or not line or line == '':
+            break
+        rect_obs_size = float(line)
+
+        rectangle_obstacles.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(rect_obs_x, rect_obs_y,rect_obs_size))
 
     f.close()
     f2.close()
@@ -171,8 +177,8 @@ def InputGame_SpeedORCamera_Moveing_Degree():
     if not map_stop:
         for tile in tiles:
             tile.GetCamera_Moving_Degree(camera_moving_degree_x)
-        for triangle_obstacle in triangle_obstacles:
-            triangle_obstacle.GetCamera_Moving_Degree(camera_moving_degree_x)
+        for rectangle_obstacle in rectangle_obstacles:
+            rectangle_obstacle.GetCamera_Moving_Degree(camera_moving_degree_x)
     if map_stop:
         background.GetGame_Speed(0)
         character.map_stop = True

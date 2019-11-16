@@ -2,6 +2,8 @@ from pico2d import *
 import game_framework
 import title_state
 
+import Stage2_state
+
 GOAL_POINT = 7190
 WORD_END_X = 7440.704599999951
 
@@ -15,7 +17,7 @@ key_event_table = {
 }
 
 
-class State1_State:
+class Run_State:
     @staticmethod
     def enter(character, event):
         if event == MOUSE_DOWN:
@@ -78,7 +80,7 @@ class Stop_State:
         global timer
         timer -= game_framework.frame_time
         if timer<=0:
-            game_framework.change_state(title_state)
+            game_framework.change_state(Stage2_state)
         if character.is_jump:
             character.Jump()
         else:
@@ -96,7 +98,7 @@ class Stop_State:
 
 
 next_state_table = {
-    State1_State: {MOUSE_DOWN: State1_State, MOUSE_UP: State1_State, INVIHINCLE_KEY: State1_State,FINISH_STAGE: Stop_State}
+    Run_State: {MOUSE_DOWN: Run_State, MOUSE_UP: Run_State, INVIHINCLE_KEY: Run_State, FINISH_STAGE: Stop_State}
 }
 
 
@@ -115,9 +117,9 @@ class CHARACTER:
         self.invincicle_mode = False
         self.stage = 0
         self.event_que = []
-        self.cur_state = State1_State
+        self.cur_state = Run_State
         if self.stage == 1:
-            self.cur_state = State1_State
+            self.cur_state = Run_State
         self.cur_state.enter(self, None)
 
 
