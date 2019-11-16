@@ -134,17 +134,7 @@ def ReadPos():
         if line == 'end\n' or (not line) or line == '':
             break
         tile_y = float(line)
-        line = f.readline()
-        line.strip('\n')
-        if line == 'end\n' or not line or line == '':
-            break
-        tile_mode = int(line)
-        if tile_mode == 1:
-            tiles.append(tile_class.TILE(tile_x, tile_y, 100, 100, 1))
-        elif tile_mode == 2:
-            tiles.append(tile_class.TILE(tile_x, tile_y, 70, 20, 2))
-        elif tile_mode == 3:
-            tiles.append(tile_class.TILE(tile_x, tile_y, 70, 20, 3))
+        tiles.append(tile_class.TILE(tile_x, tile_y, 100, 100, 1))
 
     f2 = open('rect_obs_pos.txt', mode='rt')
     # rectangle obstacle pos read

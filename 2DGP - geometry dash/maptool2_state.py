@@ -8,6 +8,7 @@ from pico2d import*
 import background_class
 import tile_class
 import rectangle_obstacle_class
+import Stage2_state
 
 background = None
 home = None
@@ -58,8 +59,6 @@ def exit():
         f.write('\n')
         f.write(str(tile_y[i]))
         f.write('\n')
-        f.write(str(tile_mode[i]))
-        f.write('\n')
     f.write('end\n')
 
     f2 = open('rect_obs_pos.txt', mode = 'wt')
@@ -102,25 +101,25 @@ def handle_events():
                 # obstacle selection
                 mode = 'o'
                 if(kind == 1):
+                    image = load_image('Rect_Obstacle100x100.png')
+                    size_x = 100
+                    size_y = 100
+                elif(kind == 2):
+                    image = load_image('Rect_Obstacle150x150.png')
+                    size_x = 150
+                    size_y = 150
+                elif kind == 3:
                     image = load_image('Rect_Obstacle200x200.png')
                     size_x = 200
                     size_y = 200
-                elif(kind == 2):
+                elif kind == 4:
                     image = load_image('Rect_Obstacle250x250.png')
                     size_x = 250
                     size_y = 250
-                elif kind == 3:
+                elif kind == 5:
                     image = load_image('Rect_Obstacle300x300.png')
                     size_x = 300
                     size_y = 300
-                elif kind == 4:
-                    image = load_image('Rect_Obstacle350x350.png')
-                    size_x = 350
-                    size_y = 350
-                elif kind == 5:
-                    image = load_image('Rect_Obstacle400x400.png')
-                    size_x = 400
-                    size_y = 400
             if(event.key == SDLK_1):
                 kind = 1
                 if(mode == 't'):
@@ -164,7 +163,7 @@ def handle_events():
                 inspeed = speed
                 stop = False
             if event.key == SDLK_m:
-                game_framework.change_state(State1_state)
+                game_framework.change_state(Stage2_state)
             if event.key == SDLK_p:
                 down_p_count += 1
                 if down_p_count % 2 == 1:
@@ -218,11 +217,10 @@ def Create():
         tiles.append(tile_class.TILE(x,y,size_x,size_y,1))
         tile_x.append(x + camera_moving_degree_x)
         tile_y.append(y)
-        tile_mode.append(1)
         delete_idx = "tile"
     elif mode == 'o' and kind == 1:
         #triangle obstacle
-        rect_obses.append(rectangle_obstacle_class.OBSTACLE_TRIANGLE(x,y))
+        rect_obses.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(x,y,size_x))
         rect_obs_x.append(x + camera_moving_degree_x)
         rect_obs_y.append(y)
         rect_obs_size.append(size_x)
