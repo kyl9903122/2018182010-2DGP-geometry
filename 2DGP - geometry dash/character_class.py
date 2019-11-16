@@ -4,11 +4,12 @@ import title_state
 
 import Stage2_state
 
-GOAL_POINT = 7190
-WORD_END_X = 7440.704599999951
+GOAL1_POINT = 7190
+WORD1_END_X = 7440.704599999951
+
 
 # Character Event
-MOUSE_DOWN, MOUSE_UP, INVIHINCLE_KEY, FINISH_STAGE = range(4)
+MOUSE_DOWN, MOUSE_UP, INVIHINCLE_KEY, FINISH_STAGE, RIDE_VIHICLE = range(5)
 
 key_event_table = {
     (SDL_MOUSEBUTTONDOWN, None): MOUSE_DOWN,
@@ -16,6 +17,7 @@ key_event_table = {
     (SDL_KEYDOWN, SDLK_p): INVIHINCLE_KEY
 }
 
+###################################################################################################
 
 class Run_State:
     @staticmethod
@@ -37,9 +39,12 @@ class Run_State:
     def do(character):
         print("State1 State do")
         character.Move()
-        if character.x >= GOAL_POINT:
+        if character.x >= GOAL1_POINT:
             character.cur_state = Stop_State
             character.cur_state.enter(character,FINISH_STAGE)
+        if character.x >= VIHICLE_START_POINT:
+            character.cur_state = Fly_State
+            character.cur_state.enter(character,RIDE_VIHICLE)
         if not character.invincicle_mode:
             for tile in character.tiles:
                 if character.CheckDeath(tile):
@@ -59,6 +64,7 @@ class Run_State:
         else:
             character.image.clip_draw(0, 0, 117, 118, 130, character.y, character.size, character.size)
 
+################################################################################################################
 
 class Stop_State:
     @staticmethod
@@ -79,7 +85,44 @@ class Stop_State:
     def do(character):
         global timer
         timer -= game_framework.frame_time
-        if timer<=0:
+        if timer <= 0:
+            if timer <= 0:
+                game_framework.change_state(Stage2_state)
+        if character.is_jump:
+            character.Jump()
+            character.jumping_velocity = 400
+        else:
+            character.Fall()
+            if character.bottom <= 100:
+                character.y = 100 + character.size / 2
+                character.y = 100 + character.size / 2
+                character.is_jump = True
+                character.falling_velocity = 0
+
+    @staticmethod
+    def draw(character):
+        character.image.clip_draw(0, 0, 117, 118, character.x - 6541 + 130, character.y, character.size, character.size)
+
+##########################################################################################################################
+
+class Fly_State:
+    @staticmethod
+    def enter(character, event):
+        print("Fly_State")
+        if event == RIDE_VIHICLE:
+            character.size = 40
+        global timer
+        timer = 3
+
+    @staticmethod
+    def exit(character, event):
+        pass
+
+    @staticmethod
+    def do(character):
+        global timer
+        timer -= game_framework.frame_time
+        if timer <= 0:
             game_framework.change_state(Stage2_state)
         if character.is_jump:
             character.Jump()
@@ -87,18 +130,19 @@ class Stop_State:
             character.jumping_velocity = 400
             character.Fall()
             if character.bottom <= 100:
-                character.y = 100+character.size/2
+                character.y = 100 + character.size / 2
                 character.is_jump = True
                 character.falling_velocity = 0
-        pass
 
     @staticmethod
     def draw(character):
-        character.image.clip_draw(0, 0, 117, 118, character.x - 6541 + 130, character.y, character.size, character.size)
+        character.image.clip_draw(0, 0, 200, 200, 130, character.y, character.size, character.size)
 
 
 next_state_table = {
-    Run_State: {MOUSE_DOWN: Run_State, MOUSE_UP: Run_State, INVIHINCLE_KEY: Run_State, FINISH_STAGE: Stop_State}
+    Run_State: {MOUSE_DOWN: Run_State, MOUSE_UP: Run_State, INVIHINCLE_KEY: Run_State, FINISH_STAGE: Stop_State, RIDE_VIHICLE: Fly_State},
+    Fly_State: {MOUSE_DOWN: Fly_State, MOUSE_UP: Fly_State, INVIHINCLE_KEY: Fly_State, FINISH_STAGE: Stop_State, RIDE_VIHICLE: Fly_State},
+    Stop_State: {MOUSE_DOWN: Stop_State, MOUSE_UP: Stop_State, INVIHINCLE_KEY: Stop_State, FINISH_STAGE: Stop_State, RIDE_VIHICLE: Stop_State}
 }
 
 
@@ -113,13 +157,11 @@ class CHARACTER:
         self.tiles = []
         self.triangle_obstacles = []
         self.is_jump = False
-        self.moving_degree, self.game_speed = 0, 0
+        self.moving_degree= 0
         self.invincicle_mode = False
-        self.stage = 0
+        self.ufo = None
         self.event_que = []
         self.cur_state = Run_State
-        if self.stage == 1:
-            self.cur_state = Run_State
         self.cur_state.enter(self, None)
 
 
@@ -145,6 +187,11 @@ class CHARACTER:
                     self.y = tile.top + self.size / 2
                     self.falling_velocity = 0
                     return
+
+    def Fall_Reverse(self):
+        self.y -= self.falling_velocity * game_framework.frame_time
+        self.falling_velocity -= 15
+        self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
     def draw(self):
         self.cur_state.draw(self)
@@ -200,10 +247,8 @@ class CHARACTER:
             if self.ColisionCheckWithTile(tile):
                 if tile.mode == 3:
                     self.is_death = True
-                    print("die for tile mode 3")
                 if tile.bottom > self.bottom:
                     self.is_death = True
-                    print("die for collision with tile")
                     print(self.bottom, self.bottom)
             if self.y <= 0:
                 self.is_death = True
