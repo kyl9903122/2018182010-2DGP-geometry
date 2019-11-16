@@ -20,6 +20,9 @@ class Stop_State:
 
     @staticmethod
     def do(ufo):
+        if ufo.move:
+            ufo.cur_state = Fly_State
+            ufo.cur_state.enter(ufo, MOVE_START)
         pass
 
     @staticmethod
@@ -29,6 +32,14 @@ class Stop_State:
 class Fly_State:
     @staticmethod
     def enter(ufo, event):
+        print("ufo: ",event)
+        if event == MOUSE_DOWN:
+            print("ufo mouse down")
+            ufo.fly = True
+            ufo.velocity = 0
+        elif event == MOUSE_UP:
+            ufo.fly = False
+            ufo.velocity = 0
         pass
 
     @staticmethod
@@ -37,9 +48,14 @@ class Fly_State:
 
     @staticmethod
     def do(ufo):
-        ufo.x = ufo.moving_degree + 130
+        ufo.x = ufo.camera_moving_degree+130
+        ufo.left, ufo.right = ufo.x - ufo.size_x/2,ufo.x+ufo.size_x/2
         if ufo.fly:
-            ufo.
+            print("ufo up")
+            ufo.Up()
+        else:
+            print("ufo down")
+            ufo.Fall()
         pass
 
     @staticmethod
@@ -76,7 +92,7 @@ next_state_table = {
 class UFO:
     def __init__(self):
         self.image = load_image('UFO.png')
-        self.x, self.y, self.size_x, self.size_y,= 1000, 110, 50,20
+        self.x, self.y, self.size_x, self.size_y,= 1000, 126, 90, 50
         self.obstacles,self.tiles = [],[]
         # 충돌체크시 필요한 bound box를 만든다
         self.top, self.bottom, self.left, self.right = self.y + self.size_y / 2, self.y - self.size_y / 2, self.x - self.size_x / 2, self.x + self.size_x / 2
@@ -84,6 +100,7 @@ class UFO:
         # 캐릭터가 UFO를 타면 True가 된다
         self.move = False
         self.fly = False
+        self.velocity = 0
         self.event_que = []
         self.cur_state = Stop_State
         self.cur_state.enter(self, None)
@@ -122,22 +139,19 @@ class UFO:
         return True
 
     def Fall(self):
-        self.y += self.falling_velocity * game_framework.frame_time
-        self.falling_velocity -= 15
-        self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
+        self.Down()
         for tile in self.tiles:
-            if tile.left + 5 < self.right < tile.right - 5:
-                if tile.bottom <= self.bottom <= tile.top + 2:
-                    self.y = tile.top + self.size / 2
-                    self.falling_velocity = 0
-                    return
-            elif tile.left + 5 <= self.left <= tile.right < self.right:
-                if tile.bottom <= self.bottom <= tile.top + 2:
-                    self.y = tile.top + self.size / 2
-                    self.falling_velocity = 0
-                    return
+            if self.ColideCheck(tile):
+                self.y = tile.top+self.size_y/2
+                self.velocity = 0
 
-    def Fall_Reverse(self):
-        self.y -= self.falling_velocity * game_framework.frame_time
-        self.falling_velocity -= 15
-        self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
+
+    def Up(self):
+        self.y -= self.velocity * game_framework.frame_time
+        self.velocity -= 15
+        self.top, self.bottom = self.y + self.size_y / 2, self.y - self.size_y / 2
+
+    def Down(self):
+        self.y += self.velocity * game_framework.frame_time
+        self.velocity -= 15
+        self.top, self.bottom = self.y + self.size_y / 2, self.y - self.size_y / 2

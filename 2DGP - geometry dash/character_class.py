@@ -42,7 +42,7 @@ class Run_State:
         if character.x >= GOAL1_POINT:
             character.cur_state = Stop_State
             character.cur_state.enter(character,FINISH_STAGE)
-        if character.x >= VIHICLE_START_POINT:
+        if character.ride_ufo:
             character.cur_state = Fly_State
             character.cur_state.enter(character,RIDE_VIHICLE)
         if not character.invincicle_mode:
@@ -108,11 +108,14 @@ class Stop_State:
 class Fly_State:
     @staticmethod
     def enter(character, event):
-        print("Fly_State")
         if event == RIDE_VIHICLE:
             character.size = 40
-        global timer
-        timer = 3
+            character.y = character.ufo.y +35
+        elif event == INVIHINCLE_KEY:
+            if character.invincicle_mode:
+                character.invincicle_mode = False
+            else:
+                character.invincicle_mode = True
 
     @staticmethod
     def exit(character, event):
@@ -120,19 +123,10 @@ class Fly_State:
 
     @staticmethod
     def do(character):
-        global timer
-        timer -= game_framework.frame_time
-        if timer <= 0:
-            game_framework.change_state(Stage2_state)
-        if character.is_jump:
-            character.Jump()
-        else:
-            character.jumping_velocity = 400
-            character.Fall()
-            if character.bottom <= 100:
-                character.y = 100 + character.size / 2
-                character.is_jump = True
-                character.falling_velocity = 0
+        character.x = character.moving_degree + 130
+        character.y = character.ufo.y + 35
+        character.top, character.bottom = character.y + character.size / 2, character.y - character.size / 2
+        pass
 
     @staticmethod
     def draw(character):
@@ -160,6 +154,8 @@ class CHARACTER:
         self.moving_degree= 0
         self.invincicle_mode = False
         self.ufo = None
+        self.fly = False
+        self.ride_ufo = False
         self.event_que = []
         self.cur_state = Run_State
         self.cur_state.enter(self, None)
@@ -173,9 +169,7 @@ class CHARACTER:
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
     def Fall(self):
-        self.y += self.falling_velocity * game_framework.frame_time
-        self.falling_velocity -= 15
-        self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
+        self.Down()
         for tile in self.tiles:
             if tile.left + 5 < self.right < tile.right - 5:
                 if tile.bottom <= self.bottom <= tile.top + 2:
@@ -187,11 +181,6 @@ class CHARACTER:
                     self.y = tile.top + self.size / 2
                     self.falling_velocity = 0
                     return
-
-    def Fall_Reverse(self):
-        self.y -= self.falling_velocity * game_framework.frame_time
-        self.falling_velocity -= 15
-        self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
     def draw(self):
         self.cur_state.draw(self)
@@ -255,4 +244,10 @@ class CHARACTER:
 
     def GetCamera_Moving_Degree(self, camera_moving_degree):
         self.moving_degree = camera_moving_degree
+
+
+    def Down(self):
+        self.y += self.falling_velocity * game_framework.frame_time
+        self.falling_velocity -= 15
+        self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 

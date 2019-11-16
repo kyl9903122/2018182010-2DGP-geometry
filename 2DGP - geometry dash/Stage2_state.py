@@ -9,13 +9,13 @@ import character_class
 import background_class
 import tile_class
 import rectangle_obstacle_class
-
-
+import ufo_class
 
 name = "Stage2 State"
 
 # 맵이 완성된 후 값을 바꿔준다
 WORD_END_X = 7440.704599999951
+VIHICLE_START_POINT = 1000
 
 PIXEL_PER_METER = (3.0 / 1.0)
 RUN_SPEED_KMPH = 0.01
@@ -24,7 +24,7 @@ RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 font = None
-character, background, tiles, rectangle_obstacles = None, None, None, None
+character, background, tiles, rectangle_obstacles, ufo = None, None, None, None, None
 isJump = False
 game_speed, temp_speed = 0, 0
 degree = 0
@@ -35,21 +35,25 @@ map_stop = False
 
 
 def enter():
-    global character, background, tiles, rectangle_obstacles
+    global character, background, tiles, rectangle_obstacles, ufo
     background = background_class.BACKGROUND()
     tiles, rectangle_obstacles = [], []
     character = character_class.CHARACTER()
-    character.stage = 1
+    ufo = ufo_class.UFO()
     global camera_moving_degree_x, stop, game_speed, map_stop
     game_speed = 270.0
     camera_moving_degree_x = 0
     map_stop = False
     ReadPos()
     character.tiles = tiles
+    character.ufo = ufo
+    ufo.tiles = tiles
     stop = 0
     game_world.add_object(background, 0)
     game_world.add_object(character, 1)
+    game_world.add_object(ufo,1)
     game_world.add_objects(tiles, 1)
+    game_world.add_objects(rectangle_obstacles,1)
 
 
 def exit():
@@ -86,12 +90,15 @@ def handle_events():
                     temp_speed = game_speed
                     game_speed = 800
                     character.handle_event(event)
+                    ufo.handle_event(event)
                 else:
                     game_speed = temp_speed
                     temp_speed = 0
                     character.handle_event(event)
+                    ufo.handle_event(event)
         else:
             character.handle_event(event)
+            ufo.handle_event(event)
 
 
 def update():
@@ -102,6 +109,9 @@ def update():
         camera_moving_degree_x += game_speed * game_framework.frame_time
         if camera_moving_degree_x >= WORD_END_X - 980:
             map_stop = True
+        if character.x >= VIHICLE_START_POINT:
+            character.ride_ufo = True
+            ufo.move = True
         InputGame_SpeedORCamera_Moveing_Degree()
         # 시간이 지날수록 속도 빨라지게
         for game_object in game_world.all_objects():
@@ -155,7 +165,7 @@ def ReadPos():
             break
         rect_obs_size = float(line)
 
-        rectangle_obstacles.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(rect_obs_x, rect_obs_y,rect_obs_size))
+        rectangle_obstacles.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(rect_obs_x, rect_obs_y, rect_obs_size))
 
     f.close()
     f2.close()
@@ -164,6 +174,7 @@ def ReadPos():
 def InputGame_SpeedORCamera_Moveing_Degree():
     character.GetCamera_Moving_Degree(camera_moving_degree_x)
     background.GetGame_Speed(game_speed * game_framework.frame_time)
+    ufo.GetCamera_Moving_Degree(camera_moving_degree_x)
     if not map_stop:
         for tile in tiles:
             tile.GetCamera_Moving_Degree(camera_moving_degree_x)
