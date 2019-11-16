@@ -56,7 +56,9 @@ class Fly_State:
         else:
             print("ufo down")
             ufo.Fall()
-        pass
+        for obstace in ufo.obstacles:
+            if ufo.ColideCheck(obstace):
+                ufo.collide = True
 
     @staticmethod
     def draw(ufo):
@@ -100,6 +102,7 @@ class UFO:
         # 캐릭터가 UFO를 타면 True가 된다
         self.move = False
         self.fly = False
+        self.collide = False
         self.velocity = 0
         self.event_que = []
         self.cur_state = Stop_State

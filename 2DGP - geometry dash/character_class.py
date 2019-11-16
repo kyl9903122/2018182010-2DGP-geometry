@@ -124,8 +124,12 @@ class Fly_State:
     @staticmethod
     def do(character):
         character.x = character.moving_degree + 130
+        character.left, character.right = character.x - character.size / 2, character.x + character.size / 2
         character.y = character.ufo.y + 35
         character.top, character.bottom = character.y + character.size / 2, character.y - character.size / 2
+        for obstace in character.obstacles:
+            if character.ColideCheck(obstace):
+                character.is_death = True
         pass
 
     @staticmethod

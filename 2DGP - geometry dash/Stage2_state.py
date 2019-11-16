@@ -116,7 +116,7 @@ def update():
         # 시간이 지날수록 속도 빨라지게
         for game_object in game_world.all_objects():
             game_object.update()
-        if character.is_death:
+        if character.is_death or ufo.coliide:
             game_framework.change_state(title_state)
 
 
