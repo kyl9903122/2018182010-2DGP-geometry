@@ -38,6 +38,11 @@ class Fly_State:
         elif event == MOUSE_UP:
             ufo.fly = False
             ufo.velocity = 0
+        elif event == INVIHINCLE_KEY:
+            if ufo.invincicle_mode:
+                ufo.invincicle_mode = False
+            else:
+                ufo.invincicle_mode = True
         pass
 
     @staticmethod
@@ -54,13 +59,14 @@ class Fly_State:
         else:
             print("ufo down")
             ufo.Fall()
-        for obstacle in ufo.obstacles:
-            if ufo.ColideCheck(obstacle):
-                print("collide ufo: ",ufo.x," ",obstacle.x)
+        if not ufo.invincicle_mode:
+            for obstacle in ufo.obstacles:
+                if ufo.ColideCheck(obstacle):
+                    print("collide ufo: ",ufo.x," ",obstacle.x)
+                    ufo.collide = True
+                    break
+            if ufo.bottom <= 0:
                 ufo.collide = True
-                break
-        if ufo.bottom <= 0:
-            ufo.collide = True
 
     @staticmethod
     def draw(ufo):
@@ -105,6 +111,7 @@ class UFO:
         self.move = False
         self.fly = False
         self.collide = False
+        self.invincicle_mode = False
         self.velocity = 0
         self.event_que = []
         self.cur_state = Stop_State
