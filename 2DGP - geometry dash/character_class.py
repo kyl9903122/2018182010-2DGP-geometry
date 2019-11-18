@@ -4,13 +4,12 @@ import title_state
 
 import Stage2_state
 
-GOAL1_POINT = 7190
-WORD1_END_X = 7440.704599999951
-REVERSE_POS = [4589.568407440174]
-
+GOAL_POINT = [7190, 9903.68660381633]
+WORD1_END_X = 10050.68660381633
+GET_OFF_POS = 8900
 
 # Character Event
-MOUSE_DOWN, MOUSE_UP, INVIHINCLE_KEY, FINISH_STAGE, RIDE_UFO, REVERSE = range(6)
+MOUSE_DOWN, MOUSE_UP, INVIHINCLE_KEY, FINISH_STAGE, RIDE_UFO, REVERSE, GET_OFF_UFO = range(7)
 
 key_event_table = {
     (SDL_MOUSEBUTTONDOWN, None): MOUSE_DOWN,
@@ -18,11 +17,13 @@ key_event_table = {
     (SDL_KEYDOWN, SDLK_p): INVIHINCLE_KEY
 }
 
+
 ###################################################################################################
 
 class Run_State:
     @staticmethod
     def enter(character, event):
+        print("charater run state enter")
         if event == MOUSE_DOWN:
             character.is_jump = True
         elif event == INVIHINCLE_KEY:
@@ -30,6 +31,9 @@ class Run_State:
                 character.no_death = False
             else:
                 character.no_death = True
+        elif event == GET_OFF_UFO:
+            print("get off ufo")
+            character.ride_ufo = False
         pass
 
     @staticmethod
@@ -39,7 +43,8 @@ class Run_State:
     @staticmethod
     def do(character):
         character.Move()
-        if character.x >= GOAL1_POINT:
+        if character.x >= GOAL_POINT[1]:
+            # del GOAL_POINT[0]
             character.add_event(FINISH_STAGE)
         if character.ride_ufo:
             character.add_event(RIDE_UFO)
@@ -57,16 +62,19 @@ class Run_State:
     @staticmethod
     def draw(character):
         if character.map_stop:
-            character.image.clip_draw(0, 0, 117, 118, character.x - 6541 + 130, character.y, character.size,
+            character.image.clip_draw(0, 0, 117, 118, character.x - (GOAL_POINT[1] - 694) + 130, character.y,
+                                      character.size,
                                       character.size)
         else:
             character.image.clip_draw(0, 0, 117, 118, 130, character.y, character.size, character.size)
+
 
 ################################################################################################################
 
 class Stop_State:
     @staticmethod
     def enter(character, event):
+        print("charcater stop enter")
         if event == FINISH_STAGE:
             character.is_jump = True
             character.jumping_velocity = 400
@@ -101,21 +109,21 @@ class Stop_State:
     def draw(character):
         character.image.clip_draw(0, 0, 117, 118, character.x - 6541 + 130, character.y, character.size, character.size)
 
+
 ##########################################################################################################################
 
 class Fly_State:
     @staticmethod
     def enter(character, event):
+        print("character fly enter")
         if event == RIDE_UFO:
             character.size = 40
-            character.y = character.ufo.y +35
+            character.y = character.ufo.y + 35
         elif event == INVIHINCLE_KEY:
             if character.no_death:
                 character.no_death = False
-                print("character invi: ", character.no_death)
             else:
                 character.no_death = True
-                print("character invi: ", character.no_death)
 
     @staticmethod
     def exit(character, event):
@@ -130,17 +138,16 @@ class Fly_State:
         if not character.no_death:
             for obstacle in character.obstacles:
                 if character.ColisionCheckWithTile(obstacle):
-                    print("chracter_colide fly: ", character.x, " ", obstacle.x)
                     character.is_death = True
                     break
             if character.top >= 510:
                 character.is_death = True
-        for i in range(len(REVERSE_POS)):
-            if character.right >= REVERSE_POS[i]:
+        if len(character.REVERSE_POS) > 0:
+            if character.left >= character.REVERSE_POS[0]:
+                del character.REVERSE_POS[0]
                 character.add_event(REVERSE)
-                del REVERSE_POS[0]
-                break
-
+        if character.x >= GET_OFF_POS:
+            character.add_event(GET_OFF_UFO)
 
     @staticmethod
     def draw(character):
@@ -152,16 +159,15 @@ class Fly_State:
 class Reverse_Fly_State:
     @staticmethod
     def enter(character, event):
+        print("character reverse fly enter")
         if event == RIDE_UFO:
             character.size = 40
-            character.y = character.ufo.y +35
+            character.y = character.ufo.y + 35
         elif event == INVIHINCLE_KEY:
             if character.no_death:
                 character.no_death = False
-                print("cha no_death",character.no_death)
             else:
                 character.no_death = True
-                print("cha no_death", character.no_death)
 
     @staticmethod
     def exit(character, event):
@@ -176,33 +182,38 @@ class Reverse_Fly_State:
         if not character.no_death:
             for obstacle in character.obstacles:
                 if character.ColisionCheckWithTile(obstacle):
-                    print("chracter_colide fly: ", character.x, " ", obstacle.x)
                     character.is_death = True
                     break
             if character.top <= 0:
                 character.is_death = True
-        for i in range(len(REVERSE_POS)):
-            if character.right >= REVERSE_POS[i]:
+        if len(character.REVERSE_POS) > 0:
+            if character.left >= character.REVERSE_POS[0]:
+                del character.REVERSE_POS[0]
                 character.add_event(REVERSE)
-                del REVERSE_POS[0]
-                break
-
+        if character.x >= GET_OFF_POS:
+            character.add_event(GET_OFF_UFO)
 
     @staticmethod
     def draw(character):
-        character.image.composite_draw(0,'v',130, character.y, character.size, character.size)
+        character.image.composite_draw(0, 'v', 130, character.y, character.size, character.size)
 
 
 next_state_table = {
-    Run_State: {MOUSE_DOWN: Run_State, MOUSE_UP: Run_State, INVIHINCLE_KEY: Run_State, FINISH_STAGE: Stop_State, RIDE_UFO: Fly_State, REVERSE: Run_State},
-    Fly_State: {MOUSE_DOWN: Fly_State, MOUSE_UP: Fly_State, INVIHINCLE_KEY: Fly_State, FINISH_STAGE: Stop_State, RIDE_UFO: Fly_State,  REVERSE: Reverse_Fly_State},
-    Stop_State: {MOUSE_DOWN: Stop_State, MOUSE_UP: Stop_State, INVIHINCLE_KEY: Stop_State, FINISH_STAGE: Stop_State, RIDE_UFO: Stop_State, REVERSE: Fly_State},
-    Reverse_Fly_State: {MOUSE_DOWN: Reverse_Fly_State, MOUSE_UP: Reverse_Fly_State, INVIHINCLE_KEY: Reverse_Fly_State, FINISH_STAGE: Stop_State, RIDE_UFO: Reverse_Fly_State,  REVERSE: Fly_State}
+    Run_State: {MOUSE_DOWN: Run_State, MOUSE_UP: Run_State, INVIHINCLE_KEY: Run_State, FINISH_STAGE: Stop_State,
+                RIDE_UFO: Fly_State, REVERSE: Run_State, GET_OFF_UFO: Run_State},
+    Fly_State: {MOUSE_DOWN: Fly_State, MOUSE_UP: Fly_State, INVIHINCLE_KEY: Fly_State, FINISH_STAGE: Stop_State,
+                RIDE_UFO: Fly_State, REVERSE: Reverse_Fly_State, GET_OFF_UFO: Run_State},
+    Stop_State: {MOUSE_DOWN: Stop_State, MOUSE_UP: Stop_State, INVIHINCLE_KEY: Stop_State, FINISH_STAGE: Stop_State,
+                 RIDE_UFO: Stop_State, REVERSE: Stop_State, GET_OFF_UFO: Stop_State},
+    Reverse_Fly_State: {MOUSE_DOWN: Reverse_Fly_State, MOUSE_UP: Reverse_Fly_State, INVIHINCLE_KEY: Reverse_Fly_State,
+                        FINISH_STAGE: Stop_State, RIDE_UFO: Reverse_Fly_State, REVERSE: Fly_State,
+                        GET_OFF_UFO: Run_State}
 }
 
 
 class CHARACTER:
     def __init__(self):
+        global GOAL_POINT
         self.image = load_image('character.png')
         self.x, self.y = 130, 500
         self.size = 50
@@ -212,7 +223,7 @@ class CHARACTER:
         self.tiles = []
         self.obstacles = []
         self.is_jump = False
-        self.moving_degree= 0
+        self.moving_degree = 0
         self.no_death = False
         self.ufo = None
         self.fly = False
@@ -220,7 +231,8 @@ class CHARACTER:
         self.event_que = []
         self.cur_state = Run_State
         self.cur_state.enter(self, None)
-
+        self.REVERSE_POS = [4589.568407440174, 7119.122155946479, 7598.9953683554995, 8242.51725965538]
+        GOAL_POINT = [7190, 9903.68660381633]
 
     def Jump(self):
         self.y += self.jumping_velocity * game_framework.frame_time
@@ -230,6 +242,7 @@ class CHARACTER:
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
     def Fall(self):
+        print("character fall")
         self.Down()
         for tile in self.tiles:
             if tile.left + 5 < self.right < tile.right - 5:
@@ -250,18 +263,17 @@ class CHARACTER:
         self.cur_state.do(self)
         if len(self.event_que) > 0:
             event = self.event_que.pop()
-            self.cur_state.exit(self,event)
+            self.cur_state.exit(self, event)
             self.cur_state = next_state_table[self.cur_state][event]
-            self.cur_state.enter(self,event)
+            self.cur_state.enter(self, event)
 
-    def add_event(self,event):
-        self.event_que.insert(0,event)
+    def add_event(self, event):
+        self.event_que.insert(0, event)
 
-    def handle_event(self,event):
-        if(event.type,event.key) in key_event_table:
-            key_event = key_event_table[(event.type,event.key)]
+    def handle_event(self, event):
+        if (event.type, event.key) in key_event_table:
+            key_event = key_event_table[(event.type, event.key)]
             self.add_event(key_event)
-
 
     def Move(self):
         self.x = self.moving_degree + 130
@@ -306,9 +318,7 @@ class CHARACTER:
     def GetCamera_Moving_Degree(self, camera_moving_degree):
         self.moving_degree = camera_moving_degree
 
-
     def Down(self):
         self.y += self.falling_velocity * game_framework.frame_time
         self.falling_velocity -= 15
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
-

@@ -295,6 +295,7 @@ def Create():
         rect_obses.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(x, y, size_x,2))
         rect_obs_x.append(x + camera_moving_degree_x-10)
         rect_obs_y.append(y)
+        rect_obs_size.append(size_x)
         rect_obs_mode.append(obs_mode)
         delete_idx = "rect_obs"
 

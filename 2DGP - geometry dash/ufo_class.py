@@ -1,9 +1,9 @@
 from pico2d import *
 import game_framework
 
-REVERSE_POS = [4589.568407440174]
+GET_OFF_POS = 8900
 
-MOUSE_DOWN, MOUSE_UP, INVIHINCLE_KEY, FINISH_STAGE, MOVE_START, REVERSE = range(6)
+MOUSE_DOWN, MOUSE_UP, INVIHINCLE_KEY, FINISH_STAGE, MOVE_START, REVERSE, GET_OFF_UFO = range(7)
 
 key_event_table = {
     (SDL_MOUSEBUTTONDOWN, None): MOUSE_DOWN,
@@ -79,11 +79,13 @@ class Fly_State:
                     break
             if ufo.bottom <= 0:
                 ufo.collide = True
-        for i in range(len(REVERSE_POS)):
-            if ufo.right >= REVERSE_POS[i]:
+        if len(ufo.REVERSE_POS) > 0:
+            if ufo.left >= ufo.REVERSE_POS[0]:
+                del ufo.REVERSE_POS[0]
+                print(ufo.REVERSE_POS)
                 ufo.add_event(REVERSE)
-                del REVERSE_POS[0]
-                break
+        if ufo.x >= GET_OFF_POS:
+            ufo.add_event(GET_OFF_UFO)
 
     @staticmethod
     def draw(ufo):
@@ -129,25 +131,50 @@ class Reverse_Fly_State:
                     break
             if ufo.top >= 510:
                 ufo.collide = True
-        for i in range(len(REVERSE_POS)):
-            if ufo.right >= REVERSE_POS[i]:
+        if len(ufo.REVERSE_POS) > 0:
+            if ufo.left >= ufo.REVERSE_POS[0]:
+                del ufo.REVERSE_POS[0]
                 ufo.add_event(REVERSE)
-                del REVERSE_POS[0]
-                break
-        pass
+        if ufo.x >= GET_OFF_POS:
+            ufo.add_event(GET_OFF_UFO)
 
     @staticmethod
     def draw(ufo):
         ufo.image.composite_draw(0, 'v', 130, ufo.y, ufo.size_x, ufo.size_y)
 
 
+class Disapear_State:
+    @staticmethod
+    def enter(ufo, event):
+        if event == INVIHINCLE_KEY:
+            if ufo.no_death:
+                ufo.no_death = False
+                print("ufo invi: ", ufo.no_death)
+            else:
+                ufo.no_death = True
+                print("ufo invi: ", ufo.no_death)
+
+    @staticmethod
+    def exit(ufo, event):
+        pass
+
+    @staticmethod
+    def do(ufo):
+        pass
+
+    @staticmethod
+    def draw(ufo):
+        ufo.image.draw(130, ufo.y, ufo.size_x, ufo.size_y)
+
 next_state_table = {
     Stop_State: {MOUSE_DOWN: Stop_State, MOUSE_UP: Stop_State, INVIHINCLE_KEY: Stop_State, FINISH_STAGE: Stop_State,
-                 MOVE_START: Fly_State, REVERSE: Stop_State},
+                 MOVE_START: Fly_State, REVERSE: Stop_State,GET_OFF_UFO: Stop_State},
     Fly_State: {MOUSE_DOWN: Fly_State, MOUSE_UP: Fly_State, INVIHINCLE_KEY: Fly_State, FINISH_STAGE: Stop_State,
-                MOVE_START: Fly_State, REVERSE: Reverse_Fly_State},
+                MOVE_START: Fly_State, REVERSE: Reverse_Fly_State, GET_OFF_UFO: Disapear_State},
     Reverse_Fly_State: {MOUSE_DOWN: Reverse_Fly_State, MOUSE_UP: Reverse_Fly_State, INVIHINCLE_KEY: Reverse_Fly_State,
-                        FINISH_STAGE: Stop_State, MOVE_START: Reverse_Fly_State, REVERSE: Fly_State}
+                        FINISH_STAGE: Stop_State, MOVE_START: Reverse_Fly_State, REVERSE: Fly_State, GET_OFF_UFO: Disapear_State},
+    Disapear_State: {MOUSE_DOWN: Disapear_State, MOUSE_UP: Disapear_State, INVIHINCLE_KEY: Disapear_State,
+                        FINISH_STAGE: Disapear_State, MOVE_START: Disapear_State, REVERSE: Disapear_State, GET_OFF_UFO: Disapear_State}
 }
 
 
@@ -159,6 +186,7 @@ class UFO:
         # 충돌체크시 필요한 bound box를 만든다
         self.top, self.bottom, self.left, self.right = self.y + self.size_y / 2, self.y - self.size_y / 2, self.x - self.size_x / 2, self.x + self.size_x / 2
         self.camera_moving_degree = 0
+        self.REVERSE_POS = [4589.568407440174, 7119.122155946479, 7598.9953683554995,8242.51725965538]
         # 캐릭터가 UFO를 타면 True가 된다
         self.move = False
         self.fly = False

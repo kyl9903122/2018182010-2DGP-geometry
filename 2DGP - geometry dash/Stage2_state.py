@@ -14,11 +14,11 @@ import ufo_class
 name = "Stage2 State"
 
 # 맵이 완성된 후 값을 바꿔준다
-WORD_END_X = 7440.704599999951
+WORD_END_X = 10000.704599999951
 VIHICLE_START_POINT = 1000
 
 PIXEL_PER_METER = (3.0 / 1.0)
-RUN_SPEED_KMPH = 0.01
+RUN_SPEED_KMPH = 0.2
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
@@ -41,7 +41,7 @@ def enter():
     character = character_class.CHARACTER()
     ufo = ufo_class.UFO()
     global camera_moving_degree_x, stop, game_speed, map_stop
-    game_speed = 270.0
+    game_speed = 400.0
     camera_moving_degree_x = 0
     map_stop = False
     ReadPos()
@@ -90,7 +90,7 @@ def handle_events():
                 down_p_count += 1
                 if down_p_count % 2 == 1:
                     temp_speed = game_speed
-                    game_speed = 800
+                    #game_speed = 800
                     character.handle_event(event)
                     ufo.handle_event(event)
                 else:
