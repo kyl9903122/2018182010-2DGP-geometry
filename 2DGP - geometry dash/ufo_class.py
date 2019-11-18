@@ -1,5 +1,7 @@
-from pico2d import*
+from pico2d import *
 import game_framework
+
+REVERSE_POS = [4589.568407440174]
 
 MOUSE_DOWN, MOUSE_UP, INVIHINCLE_KEY, FINISH_STAGE, MOVE_START, REVERSE = range(6)
 
@@ -9,9 +11,17 @@ key_event_table = {
     (SDL_KEYDOWN, SDLK_p): INVIHINCLE_KEY
 }
 
+
 class Stop_State:
     @staticmethod
     def enter(ufo, event):
+        if  event == INVIHINCLE_KEY:
+            if ufo.no_death:
+                ufo.no_death = False
+                print("ufo invi: ", ufo.no_death)
+            else:
+                ufo.no_death = True
+                print("ufo invi: ", ufo.no_death)
         pass
 
     @staticmethod
@@ -21,13 +31,13 @@ class Stop_State:
     @staticmethod
     def do(ufo):
         if ufo.move:
-            ufo.cur_state = Fly_State
-            ufo.cur_state.enter(ufo, MOVE_START)
+            ufo.add_event(MOVE_START)
         pass
 
     @staticmethod
     def draw(ufo):
         ufo.image.draw(ufo.x - ufo.camera_moving_degree, ufo.y, ufo.size_x, ufo.size_y)
+
 
 class Fly_State:
     @staticmethod
@@ -39,10 +49,12 @@ class Fly_State:
             ufo.fly = False
             ufo.velocity = 0
         elif event == INVIHINCLE_KEY:
-            if ufo.invincicle_mode:
-                ufo.invincicle_mode = False
+            if ufo.no_death:
+                ufo.no_death = False
+                print("ufo invi: ", ufo.no_death)
             else:
-                ufo.invincicle_mode = True
+                ufo.no_death = True
+                print("ufo invi: ", ufo.no_death)
         pass
 
     @staticmethod
@@ -51,22 +63,27 @@ class Fly_State:
 
     @staticmethod
     def do(ufo):
-        ufo.x = ufo.camera_moving_degree+130
-        ufo.left, ufo.right = ufo.x - ufo.size_x/2,ufo.x+ufo.size_x/2
+        ufo.x = ufo.camera_moving_degree + 130
+        ufo.left, ufo.right = ufo.x - ufo.size_x / 2, ufo.x + ufo.size_x / 2
         if ufo.fly:
             print("ufo up")
             ufo.Up()
         else:
             print("ufo down")
             ufo.Fall()
-        if not ufo.invincicle_mode:
+        if not ufo.no_death:
             for obstacle in ufo.obstacles:
                 if ufo.ColideCheck(obstacle):
-                    print("collide ufo: ",ufo.x," ",obstacle.x)
+                    print("collide ufo: ", ufo.x, " ", obstacle.x)
                     ufo.collide = True
                     break
             if ufo.bottom <= 0:
                 ufo.collide = True
+        for i in range(len(REVERSE_POS)):
+            if ufo.right >= REVERSE_POS[i]:
+                ufo.add_event(REVERSE)
+                del REVERSE_POS[0]
+                break
 
     @staticmethod
     def draw(ufo):
@@ -76,7 +93,19 @@ class Fly_State:
 class Reverse_Fly_State:
     @staticmethod
     def enter(ufo, event):
-        pass
+        if event == MOUSE_DOWN:
+            ufo.fly = True
+            ufo.velocity = 0
+        elif event == MOUSE_UP:
+            ufo.fly = False
+            ufo.velocity = 0
+        elif event == INVIHINCLE_KEY:
+            if ufo.no_death:
+                ufo.no_death = False
+                print("ufo invi: ", ufo.no_death)
+            else:
+                ufo.no_death = True
+                print("ufo invi: ", ufo.no_death)
 
     @staticmethod
     def exit(ufo, event):
@@ -84,26 +113,49 @@ class Reverse_Fly_State:
 
     @staticmethod
     def do(ufo):
-        ufo.x = ufo.moving_degree + 130
+        ufo.x = ufo.camera_moving_degree + 130
+        ufo.left, ufo.right = ufo.x - ufo.size_x / 2, ufo.x + ufo.size_x / 2
+        if ufo.fly:
+            print("ufo up")
+            ufo.Down()
+        else:
+            print("ufo down")
+            ufo.Up()
+        if not ufo.no_death:
+            for obstacle in ufo.obstacles:
+                if ufo.ColideCheck(obstacle):
+                    print("collide ufo: ", ufo.x, " ", obstacle.x)
+                    ufo.collide = True
+                    break
+            if ufo.top >= 510:
+                ufo.collide = True
+        for i in range(len(REVERSE_POS)):
+            if ufo.right >= REVERSE_POS[i]:
+                ufo.add_event(REVERSE)
+                del REVERSE_POS[0]
+                break
         pass
 
     @staticmethod
     def draw(ufo):
-        ufo.image.composite_draw(0,'v',130, ufo.y, ufo.size_x, ufo.size_y)
+        ufo.image.composite_draw(0, 'v', 130, ufo.y, ufo.size_x, ufo.size_y)
 
 
 next_state_table = {
-    Stop_State: {MOUSE_DOWN: Stop_State, MOUSE_UP: Stop_State, INVIHINCLE_KEY: Stop_State, FINISH_STAGE: Stop_State, MOVE_START: Fly_State, REVERSE: Stop_State},
-    Fly_State: {MOUSE_DOWN: Fly_State, MOUSE_UP: Fly_State, INVIHINCLE_KEY: Fly_State, FINISH_STAGE: Stop_State, MOVE_START: Fly_State,REVERSE:Reverse_Fly_State},
-    Reverse_Fly_State: {MOUSE_DOWN: Reverse_Fly_State, MOUSE_UP: Reverse_Fly_State, INVIHINCLE_KEY: Reverse_Fly_State, FINISH_STAGE: Stop_State,MOVE_START: Reverse_Fly_State,REVERSE:Fly_State}
+    Stop_State: {MOUSE_DOWN: Stop_State, MOUSE_UP: Stop_State, INVIHINCLE_KEY: Stop_State, FINISH_STAGE: Stop_State,
+                 MOVE_START: Fly_State, REVERSE: Stop_State},
+    Fly_State: {MOUSE_DOWN: Fly_State, MOUSE_UP: Fly_State, INVIHINCLE_KEY: Fly_State, FINISH_STAGE: Stop_State,
+                MOVE_START: Fly_State, REVERSE: Reverse_Fly_State},
+    Reverse_Fly_State: {MOUSE_DOWN: Reverse_Fly_State, MOUSE_UP: Reverse_Fly_State, INVIHINCLE_KEY: Reverse_Fly_State,
+                        FINISH_STAGE: Stop_State, MOVE_START: Reverse_Fly_State, REVERSE: Fly_State}
 }
 
 
 class UFO:
     def __init__(self):
         self.image = load_image('UFO.png')
-        self.x, self.y, self.size_x, self.size_y,= 1000, 126, 90, 50
-        self.obstacles,self.tiles = [],[]
+        self.x, self.y, self.size_x, self.size_y, = 1000, 126, 90, 50
+        self.obstacles, self.tiles = [], []
         # 충돌체크시 필요한 bound box를 만든다
         self.top, self.bottom, self.left, self.right = self.y + self.size_y / 2, self.y - self.size_y / 2, self.x - self.size_x / 2, self.x + self.size_x / 2
         self.camera_moving_degree = 0
@@ -111,7 +163,7 @@ class UFO:
         self.move = False
         self.fly = False
         self.collide = False
-        self.invincicle_mode = False
+        self.no_death = False
         self.velocity = 0
         self.event_que = []
         self.cur_state = Stop_State
@@ -154,9 +206,8 @@ class UFO:
         self.Down()
         for tile in self.tiles:
             if self.ColideCheck(tile):
-                self.y = tile.top+self.size_y/2
+                self.y = tile.top + self.size_y / 2
                 self.velocity = 0
-
 
     def Up(self):
         self.y -= self.velocity * game_framework.frame_time

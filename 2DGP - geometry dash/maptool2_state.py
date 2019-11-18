@@ -165,18 +165,21 @@ def handle_events():
                     size_y = 200
                     obs_mode = 1
             if event.key == SDLK_4:
+                kind = 4
                 if (mode == 'o'):
                     image = load_image('Rect_Obstacle250x250.png')
                     size_x = 250
                     size_y = 250
                     obs_mode = 1
             if event.key == SDLK_5:
+                kind = 5
                 if (mode == 'o'):
                     image = load_image('Rect_Obstacle300x300.png')
                     size_x = 300
                     size_y = 300
                     obs_mode = 1
             if event.key == SDLK_6:
+                kind = 6
                 if (mode == 'o'):
                     image = load_image('Reverse_Gate.png')
                     size_x = 150
@@ -198,7 +201,7 @@ def handle_events():
                 down_p_count += 1
                 if down_p_count % 2 == 1:
                     temp_speed = speed
-                    speed = 10
+                    speed = 800
                 else:
                     speed = temp_speed
                     temp_speed = 0
@@ -245,13 +248,13 @@ def Create():
     if mode == 't' and kind == 1:
         # basic tile
         tiles.append(tile_class.TILE(x, y, size_x, size_y, 1))
-        tile_x.append(x + camera_moving_degree_x)
+        tile_x.append(x + camera_moving_degree_x-10)
         tile_y.append(y)
         delete_idx = "tile"
     elif mode == 'o' and kind == 1:
         # triangle obstacle
         rect_obses.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(x, y, size_x,1))
-        rect_obs_x.append(x + camera_moving_degree_x)
+        rect_obs_x.append(x + camera_moving_degree_x-10)
         rect_obs_y.append(y)
         rect_obs_size.append(size_x)
         rect_obs_mode.append(obs_mode)
@@ -259,7 +262,7 @@ def Create():
     elif mode == 'o' and kind == 2:
         # triangle obstacle
         rect_obses.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(x, y, size_x,1))
-        rect_obs_x.append(x + camera_moving_degree_x)
+        rect_obs_x.append(x + camera_moving_degree_x-10)
         rect_obs_y.append(y)
         rect_obs_size.append(size_x)
         rect_obs_mode.append(obs_mode)
@@ -267,7 +270,7 @@ def Create():
     elif mode == 'o' and kind == 3:
         # triangle obstacle
         rect_obses.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(x, y, size_x,1))
-        rect_obs_x.append(x + camera_moving_degree_x)
+        rect_obs_x.append(x + camera_moving_degree_x-10)
         rect_obs_y.append(y)
         rect_obs_size.append(size_x)
         rect_obs_mode.append(obs_mode)
@@ -275,7 +278,7 @@ def Create():
     elif mode == 'o' and kind == 4:
         # triangle obstacle
         rect_obses.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(x, y, size_x,1))
-        rect_obs_x.append(x + camera_moving_degree_x)
+        rect_obs_x.append(x + camera_moving_degree_x-10)
         rect_obs_y.append(y)
         rect_obs_size.append(size_x)
         rect_obs_mode.append(obs_mode)
@@ -283,14 +286,14 @@ def Create():
     elif mode == 'o' and kind == 5:
         # triangle obstacle
         rect_obses.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(x, y, size_x,1))
-        rect_obs_x.append(x + camera_moving_degree_x)
+        rect_obs_x.append(x + camera_moving_degree_x-10)
         rect_obs_y.append(y)
         rect_obs_size.append(size_x)
         rect_obs_mode.append(obs_mode)
         delete_idx = "rect_obs"
     elif mode == 'o' and kind == 6:
         rect_obses.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(x, y, size_x,2))
-        rect_obs_x.append(x + camera_moving_degree_x)
+        rect_obs_x.append(x + camera_moving_degree_x-10)
         rect_obs_y.append(y)
         rect_obs_mode.append(obs_mode)
         delete_idx = "rect_obs"

@@ -42,7 +42,7 @@ class RECTANGLE_OBSTCLE:
             elif self.size == 300 and self.mode == 1:
                 RECTANGLE_OBSTCLE.image_5.draw(self.x - self.camera_moving_degree, self.y, self.size, self.size)
             elif self.mode == 2:
-                RECTANGLE_OBSTCLE.image_2.draw(self.x - self.camera_moving_degree, self.y, self.size, self.size)
+                RECTANGLE_OBSTCLE.gate_image.draw(self.x - self.camera_moving_degree, self.y, self.size, self.size)
 
     def update(self):
         pass
