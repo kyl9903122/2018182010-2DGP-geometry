@@ -1,5 +1,5 @@
 import game_framework
-import State1_state
+import Stage1_state
 
 name = "MaptoolState"
 
@@ -25,7 +25,7 @@ image = None
 speed, inspeed, temp_speed = 0.28, 0, 0
 stop = True
 tiles, rect_obses = [], []
-camera_moving_degree_x = 0
+camera_x = 0
 delete_idx = 0
 down_p_count = 0
 
@@ -39,7 +39,7 @@ def enter():
     global image
     image = load_image('basic_tile.png')
 
-    global x, y, mx, my, size_x, size_y, camera_moving_degree_x, stop
+    global x, y, mx, my, size_x, size_y, camera_x, stop
     size_x = 100
     size_y = 100
     camera_moving_degree_x = 0
@@ -220,7 +220,7 @@ def handle_events():
 
 
 def update():
-    global speed, camera_moving_degree_x, inspeed, speed
+    global speed, camera_x, inspeed, speed
     if (stop == False):
         InputGame_SpeedORCamera_Moveing_Degree()
         #InputGame_Speed()
@@ -251,13 +251,13 @@ def Create():
     if mode == 't' and kind == 1:
         # basic tile
         tiles.append(tile_class.TILE(x, y, size_x, size_y, 1))
-        tile_x.append(x + camera_moving_degree_x-10)
+        tile_x.append(x + camera_x - 10)
         tile_y.append(y)
         delete_idx = "tile"
     elif mode == 'o' and kind == 1:
         # triangle obstacle
         rect_obses.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(x, y, size_x,1))
-        rect_obs_x.append(x + camera_moving_degree_x-10)
+        rect_obs_x.append(x + camera_x - 10)
         rect_obs_y.append(y)
         rect_obs_size.append(size_x)
         rect_obs_mode.append(obs_mode)
@@ -265,7 +265,7 @@ def Create():
     elif mode == 'o' and kind == 2:
         # triangle obstacle
         rect_obses.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(x, y, size_x,1))
-        rect_obs_x.append(x + camera_moving_degree_x-10)
+        rect_obs_x.append(x + camera_x - 10)
         rect_obs_y.append(y)
         rect_obs_size.append(size_x)
         rect_obs_mode.append(obs_mode)
@@ -273,7 +273,7 @@ def Create():
     elif mode == 'o' and kind == 3:
         # triangle obstacle
         rect_obses.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(x, y, size_x,1))
-        rect_obs_x.append(x + camera_moving_degree_x-10)
+        rect_obs_x.append(x + camera_x - 10)
         rect_obs_y.append(y)
         rect_obs_size.append(size_x)
         rect_obs_mode.append(obs_mode)
@@ -281,7 +281,7 @@ def Create():
     elif mode == 'o' and kind == 4:
         # triangle obstacle
         rect_obses.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(x, y, size_x,1))
-        rect_obs_x.append(x + camera_moving_degree_x-10)
+        rect_obs_x.append(x + camera_x - 10)
         rect_obs_y.append(y)
         rect_obs_size.append(size_x)
         rect_obs_mode.append(obs_mode)
@@ -289,14 +289,14 @@ def Create():
     elif mode == 'o' and kind == 5:
         # triangle obstacle
         rect_obses.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(x, y, size_x,1))
-        rect_obs_x.append(x + camera_moving_degree_x-10)
+        rect_obs_x.append(x + camera_x - 10)
         rect_obs_y.append(y)
         rect_obs_size.append(size_x)
         rect_obs_mode.append(obs_mode)
         delete_idx = "rect_obs"
     elif mode == 'o' and kind == 6:
         rect_obses.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(x, y, size_x,2))
-        rect_obs_x.append(x + camera_moving_degree_x-10)
+        rect_obs_x.append(x + camera_x - 10)
         rect_obs_y.append(y)
         rect_obs_size.append(size_x)
         rect_obs_mode.append(obs_mode)
@@ -380,6 +380,6 @@ def InputGame_Speed():
 def InputGame_SpeedORCamera_Moveing_Degree():
     background.GetGame_Speed(inspeed*game_framework.frame_time)
     for tile in tiles:
-        tile.GetCamera_Moving_Degree(camera_moving_degree_x)
+        tile.GetCamera_Moving_Degree(camera_x)
     for rect_obstacle in rect_obses:
-        rect_obstacle.GetCamera_Moving_Degree(camera_moving_degree_x)
+        rect_obstacle.GetCamera_Moving_Degree(camera_x)

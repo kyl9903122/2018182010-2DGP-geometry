@@ -37,10 +37,11 @@ map_stop = False
 def enter():
     global character, background, tiles, triangle_obstacles
     background = background_class.BACKGROUND()
+    background.stage = 1
     triangle_obstacles = []
     tiles = []
     character = character_class.CHARACTER()
-    character.stage = 1
+    character.GOAL_POINT = 7190
     global camera_moving_degree_x, stop, game_speed, map_stop
     game_speed = 250.0
     camera_moving_degree_x = 0

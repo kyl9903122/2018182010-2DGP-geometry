@@ -40,8 +40,10 @@ def enter():
     background.image_1 = load_image('background2.png')
     background.image_2 = load_image('background2.png')
     background.image_3 = load_image('background2.png')
+    background.stage = 3
     tiles, rectangle_obstacles = [], []
     character = character_class.CHARACTER()
+    character.GOAL_POINT = 9903.68660381633
     ufo = ufo_class.UFO()
     global camera_moving_degree_x, stop, game_speed, map_stop
     game_speed = 600.0

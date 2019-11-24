@@ -4,8 +4,6 @@ import title_state
 
 import Stage2_state
 
-GOAL_POINT = [7190, 9903.68660381633]
-WORD1_END_X = 10050.68660381633
 GET_OFF_POS = 8900
 
 # Character Event
@@ -51,7 +49,7 @@ class Run_State:
                 character.ColisionCheckWithTriangleObstcles(triangle)
                 if character.is_death:
                     return
-        if character.x >= GOAL_POINT[1]:
+        if character.x >= character.GOAL_POINT:
             # del GOAL_POINT[0]
             character.add_event(FINISH_STAGE)
         if character.ride_ufo:
@@ -60,7 +58,7 @@ class Run_State:
     @staticmethod
     def draw(character):
         if character.map_stop:
-            character.image.clip_draw(0, 0, 117, 118, character.x - (GOAL_POINT[1] - 694) + 130, character.y,
+            character.image.clip_draw(0, 0, 117, 118, character.x - (character.GOAL_POINT - 694) + 130, character.y,
                                       character.size,
                                       character.size)
         else:
@@ -104,7 +102,8 @@ class Stop_State:
 
     @staticmethod
     def draw(character):
-        character.image.clip_draw(0, 0, 117, 118, character.x - (GOAL_POINT[1] - 694) + 130, character.y, character.size, character.size)
+        character.image.clip_draw(0, 0, 117, 118, character.x - (character.GOAL_POINT - 694) + 130, character.y,
+                                  character.size, character.size)
 
 
 ##########################################################################################################################
@@ -195,6 +194,55 @@ class Reverse_Fly_State:
         character.image.composite_draw(0, 'v', 130, character.y, character.size, character.size)
 
 
+############################################################################################################################
+
+class Reverse_Run_State:
+    @staticmethod
+    def enter(character, event):
+        if event == MOUSE_DOWN:
+            character.is_jump = True
+        elif event == INVIHINCLE_KEY:
+            if character.no_death:
+                character.no_death = False
+            else:
+                character.no_death = True
+        pass
+
+    @staticmethod
+    def exit(character, event):
+        pass
+
+    @staticmethod
+    def do(character):
+        character.Reverse_Move()
+        if not character.no_death:
+            for tile in character.tiles:
+                # check die
+                if tile.left > character.moving_degree - tile.size_x and tile.right < character.moving_degree + 1020:
+                    if character.ColisionCheckWithTile(tile):
+                        if tile.mode == 3:
+                            character.is_death = True
+                        if tile.top < character.top:
+                            character.is_death = True
+                    if character.y >= 510:
+                        character.is_death = True
+                    if character.is_death:
+                        return
+            for triangle in character.obstacles:
+                character.ColisionCheckWithTriangleObstcles(triangle)
+                if character.is_death:
+                    return
+        if character.x <= character.GOAL_POINT:
+            character.add_event(FINISH_STAGE)
+
+    @staticmethod
+    def draw(character):
+        if character.map_stop:
+            character.image.composite_draw(0, 'hv', character.x, character.y, character.size, character.size)
+        else:
+            character.image.composite_draw(0, 'hv', 1020 - 130, character.y, character.size, character.size)
+
+
 next_state_table = {
     Run_State: {MOUSE_DOWN: Run_State, MOUSE_UP: Run_State, INVIHINCLE_KEY: Run_State, FINISH_STAGE: Stop_State,
                 RIDE_UFO: Fly_State, REVERSE: Run_State, GET_OFF_UFO: Run_State},
@@ -204,13 +252,15 @@ next_state_table = {
                  RIDE_UFO: Stop_State, REVERSE: Stop_State, GET_OFF_UFO: Stop_State},
     Reverse_Fly_State: {MOUSE_DOWN: Reverse_Fly_State, MOUSE_UP: Reverse_Fly_State, INVIHINCLE_KEY: Reverse_Fly_State,
                         FINISH_STAGE: Stop_State, RIDE_UFO: Reverse_Fly_State, REVERSE: Fly_State,
-                        GET_OFF_UFO: Run_State}
+                        GET_OFF_UFO: Run_State},
+    Reverse_Run_State: {MOUSE_DOWN: Reverse_Run_State, MOUSE_UP: Reverse_Run_State, INVIHINCLE_KEY: Reverse_Run_State,
+                        FINISH_STAGE: Stop_State, RIDE_UFO: Reverse_Run_State, REVERSE: Reverse_Run_State,
+                        GET_OFF_UFO: Reverse_Run_State}
 }
 
 
 class CHARACTER:
     def __init__(self):
-        global GOAL_POINT
         self.image = load_image('character.png')
         self.x, self.y = 130, 500
         self.size = 50
@@ -229,11 +279,19 @@ class CHARACTER:
         self.cur_state = Run_State
         self.cur_state.enter(self, None)
         self.REVERSE_POS = [3793.651009301344, 5618.495640911652, 7305.081099476411, 8069.334514486767]
-        GOAL_POINT = [7190, 9903.68660381633]
+        self.GOAL_POINT = 0
 
     def Jump(self):
-        print("charater jumping")
         self.y += self.jumping_velocity * game_framework.frame_time
+        self.jumping_velocity -= 30
+
+        if self.jumping_velocity < 0:
+            print(self.jumping_velocity)
+            self.is_jump, self.jumping_velocity = False, 650
+        self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
+
+    def Reverse_Jump(self):
+        self.y -= self.jumping_velocity * game_framework.frame_time
         self.jumping_velocity -= 30
 
         if self.jumping_velocity < 0:
@@ -254,6 +312,16 @@ class CHARACTER:
                     self.y = tile.top + self.size / 2
                     self.falling_velocity = 0
                     return
+
+    def Reverse_Fall(self):
+        self.y -= self.falling_velocity * game_framework.frame_time
+        self.falling_velocity -= 15
+        self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
+        for tile in self.tiles:
+            if self.ColisionCheckWithTile(tile):
+                if tile.top >= self.top >= tile.bottom - 2:
+                    self.y = tile.bottom - self.size / 2
+                    self.falling_velocity = 0
 
     def draw(self):
         self.cur_state.draw(self)
@@ -281,6 +349,14 @@ class CHARACTER:
             self.Jump()
         else:
             self.Fall()
+
+    def Reverse_Move(self):
+        self.x = self.moving_degree + 1020-130
+        self.left, self.right = self.x - self.size / 2, self.x + self.size / 2
+        if self.is_jump:
+            self.Reverse_Jump()
+        else:
+            self.Reverse_Fall()
 
     def ColisionCheckWithTile(self, tile):
         if self.left > tile.right:

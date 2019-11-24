@@ -10,10 +10,15 @@ class OBSTACLE_TRIANGLE:
             OBSTACLE_TRIANGLE.image = load_image('triangle_obstacle.png')
         self.x, self.y, self.size = x, y, 40
         self.camera_moving_degree = 0
+        self.stage = 1
 
     def draw(self):
-        if (self.x-self.size/2 > self.camera_moving_degree-self.size and self.x + self.size/2):
-            self.image.draw(self.x-self.camera_moving_degree, self.y, self.size, self.size)
+        if self.stage == 3:
+            if (self.x-self.size/2 > self.camera_moving_degree-self.size and self.x + self.size/2):
+                self.image.comsite_draw(0,'v',self.x-self.camera_moving_degree, self.y, self.size, self.size)
+        else:
+            if (self.x-self.size/2 > self.camera_moving_degree-self.size and self.x + self.size/2):
+                self.image.draw(self.x-self.camera_moving_degree, self.y, self.size, self.size)
 
     def update(self):
         pass

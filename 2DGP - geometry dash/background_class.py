@@ -12,6 +12,7 @@ class BACKGROUND:
         self.bgm.set_volume(30)
         self.bgm.repeat_play()
         self.game_speed = 0
+        self.stage = 0
 
     def Move(self):
         if self.pivot_1_x <= -255:
@@ -24,13 +25,27 @@ class BACKGROUND:
         self.pivot_2_x -= self.game_speed
         self.pivot_3_x -= self.game_speed
 
+    def Reverse_Move(self):
+        if self.pivot_1_x >= 1020+251:
+            self.pivot_1_x = -255
+        if self.pivot_2_x >= 1020+251:
+            self.pivot_2_x = -255
+        if self.pivot_3_x >= 1020+251:
+            self.pivot_3_x = -255
+        self.pivot_1_x += self.game_speed
+        self.pivot_2_x += self.game_speed
+        self.pivot_3_x += self.game_speed
+
     def draw(self):
         self.image_1.clip_draw(0, 0, 512, 512, self.pivot_1_x, self.pivot_y, 512, 512)
         self.image_2.clip_draw(0, 0, 512, 512, self.pivot_2_x, self.pivot_y, 512, 512)
         self.image_3.clip_draw(0, 0, 512, 512, self.pivot_3_x, self.pivot_y, 512, 512)
 
     def update(self):
-        self.Move()
+        if self.stage == 1 or self.stage == 2:
+            self.Move()
+        else:
+            self.Reverse_Move()
 
     def GetGame_Speed(self, game_speed):
         self.game_speed = game_speed
