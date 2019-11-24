@@ -23,7 +23,6 @@ key_event_table = {
 class Run_State:
     @staticmethod
     def enter(character, event):
-        print("charater run state enter")
         if event == MOUSE_DOWN:
             character.is_jump = True
         elif event == INVIHINCLE_KEY:
@@ -32,7 +31,7 @@ class Run_State:
             else:
                 character.no_death = True
         elif event == GET_OFF_UFO:
-            print("get off ufo")
+            character.size = 50
             character.ride_ufo = False
         pass
 
@@ -43,11 +42,6 @@ class Run_State:
     @staticmethod
     def do(character):
         character.Move()
-        if character.x >= GOAL_POINT[1]:
-            # del GOAL_POINT[0]
-            character.add_event(FINISH_STAGE)
-        if character.ride_ufo:
-            character.add_event(RIDE_UFO)
         if not character.no_death:
             for tile in character.tiles:
                 if character.CheckDeath(tile):
@@ -57,7 +51,11 @@ class Run_State:
                 character.ColisionCheckWithTriangleObstcles(triangle)
                 if character.is_death:
                     return
-        pass
+        if character.x >= GOAL_POINT[1]:
+            # del GOAL_POINT[0]
+            character.add_event(FINISH_STAGE)
+        if character.ride_ufo:
+            character.add_event(RIDE_UFO)
 
     @staticmethod
     def draw(character):
@@ -74,7 +72,6 @@ class Run_State:
 class Stop_State:
     @staticmethod
     def enter(character, event):
-        print("charcater stop enter")
         if event == FINISH_STAGE:
             character.is_jump = True
             character.jumping_velocity = 400
@@ -96,7 +93,6 @@ class Stop_State:
                 game_framework.change_state(Stage2_state)
         if character.is_jump:
             character.Jump()
-            character.jumping_velocity = 400
         else:
             character.Fall()
             if character.bottom <= 100:
@@ -104,10 +100,11 @@ class Stop_State:
                 character.y = 100 + character.size / 2
                 character.is_jump = True
                 character.falling_velocity = 0
+                character.jumping_velocity = 400
 
     @staticmethod
     def draw(character):
-        character.image.clip_draw(0, 0, 117, 118, character.x - 6541 + 130, character.y, character.size, character.size)
+        character.image.clip_draw(0, 0, 117, 118, character.x - (GOAL_POINT[1] - 694) + 130, character.y, character.size, character.size)
 
 
 ##########################################################################################################################
@@ -235,9 +232,12 @@ class CHARACTER:
         GOAL_POINT = [7190, 9903.68660381633]
 
     def Jump(self):
+        print("charater jumping")
         self.y += self.jumping_velocity * game_framework.frame_time
         self.jumping_velocity -= 30
+
         if self.jumping_velocity < 0:
+            print(self.jumping_velocity)
             self.is_jump, self.jumping_velocity = False, 650
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
@@ -278,11 +278,10 @@ class CHARACTER:
     def Move(self):
         self.x = self.moving_degree + 130
         self.left, self.right = self.x - self.size / 2, self.x + self.size / 2
-        if not self.no_death:
-            if self.is_jump:
-                self.Jump()
-            else:
-                self.Fall()
+        if self.is_jump:
+            self.Jump()
+        else:
+            self.Fall()
 
     def ColisionCheckWithTile(self, tile):
         if self.left > tile.right:

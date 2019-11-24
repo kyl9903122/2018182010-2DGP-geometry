@@ -90,7 +90,7 @@ def handle_events():
                 down_p_count += 1
                 if down_p_count % 2 == 1:
                     temp_speed = game_speed
-                    #game_speed = 800
+                    # game_speed = 800
                     character.handle_event(event)
                     ufo.handle_event(event)
                 else:
@@ -111,7 +111,7 @@ def update():
         camera_moving_degree_x += game_speed * game_framework.frame_time
         if camera_moving_degree_x >= WORD_END_X - 980:
             map_stop = True
-        if character.x >= VIHICLE_START_POINT:
+        if VIHICLE_START_POINT <= character.x < character_class.GET_OFF_POS:
             character.ride_ufo = True
             ufo.move = True
         InputGame_SpeedORCamera_Moveing_Degree()
@@ -174,7 +174,8 @@ def ReadPos():
         if line == "end\n" or not line or line == '':
             break
         mode = int(line)
-        rectangle_obstacles.append(rectangle_obstacle_class.RECTANGLE_OBSTCLE(rect_obs_x, rect_obs_y, rect_obs_size, mode))
+        rectangle_obstacles.append(
+            rectangle_obstacle_class.RECTANGLE_OBSTCLE(rect_obs_x, rect_obs_y, rect_obs_size, mode))
 
     f.close()
     f2.close()
