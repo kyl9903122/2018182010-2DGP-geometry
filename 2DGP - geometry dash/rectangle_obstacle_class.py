@@ -26,7 +26,7 @@ class RECTANGLE_OBSTCLE:
             RECTANGLE_OBSTCLE.gate_image = load_image('Reverse_Gate.png')
         self.x, self.y, self.size, self.mode = x, y, size, mode
         # 충돌체크시 필요한 bound box를 만든다
-        self.top, self.bottom, self.left, self.right = self.y + self.size / 2 -8, self.y - self.size / 2 +8, self.x - self.size /  +8, self.x + self.size / 2 -8
+        self.top, self.bottom, self.left, self.right = self.y + self.size / 2 -3, self.y - self.size / 2 +3, self.x - self.size /  +3, self.x + self.size / 2 -3
         self.camera_moving_degree = 0
 
     def draw(self):

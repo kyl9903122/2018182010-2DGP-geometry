@@ -186,7 +186,7 @@ class UFO:
         # 충돌체크시 필요한 bound box를 만든다
         self.top, self.bottom, self.left, self.right = self.y + self.size_y / 2, self.y - self.size_y / 2, self.x - self.size_x / 2, self.x + self.size_x / 2
         self.camera_moving_degree = 0
-        self.REVERSE_POS = [4589.568407440174, 7119.122155946479, 7598.9953683554995,8242.51725965538]
+        self.REVERSE_POS = [3793.65100930134, 5618.495640911652, 7305.081099476411,8069.334514486767]
         # 캐릭터가 UFO를 타면 True가 된다
         self.move = False
         self.fly = False
@@ -222,7 +222,7 @@ class UFO:
     def ColideCheck(self, obstacle):
         if self.left > obstacle.right:
             return False
-        if self.right < obstacle.left + 2:
+        if self.right < obstacle.left :
             return False
         if self.top < obstacle.bottom:
             return False

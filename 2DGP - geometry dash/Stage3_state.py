@@ -9,13 +9,12 @@ import character_class
 import background_class
 import tile_class
 import rectangle_obstacle_class
-import ufo_class
+import 
 
-name = "Stage2 State"
+name = "Stage3 State"
 
 # 맵이 완성된 후 값을 바꿔준다
 WORD_END_X = 10000.704599999951
-VIHICLE_START_POINT = 1000
 
 PIXEL_PER_METER = (3.0 / 1.0)
 RUN_SPEED_KMPH = 0.2

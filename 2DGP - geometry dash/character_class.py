@@ -228,7 +228,7 @@ class CHARACTER:
         self.event_que = []
         self.cur_state = Run_State
         self.cur_state.enter(self, None)
-        self.REVERSE_POS = [4589.568407440174, 7119.122155946479, 7598.9953683554995, 8242.51725965538]
+        self.REVERSE_POS = [3793.651009301344, 5618.495640911652, 7305.081099476411, 8069.334514486767]
         GOAL_POINT = [7190, 9903.68660381633]
 
     def Jump(self):
@@ -242,7 +242,6 @@ class CHARACTER:
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
     def Fall(self):
-        print("character fall")
         self.Down()
         for tile in self.tiles:
             if tile.left + 5 < self.right < tile.right - 5:

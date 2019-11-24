@@ -47,6 +47,9 @@ def enter():
 
     global background, speed, inspeed
     background = background_class.BACKGROUND()
+    background.image_1 = load_image('background2.png')
+    background.image_2 = load_image('background2.png')
+    background.image_3 = load_image('background2.png')
     speed = 270
     inspeed = 0
 
