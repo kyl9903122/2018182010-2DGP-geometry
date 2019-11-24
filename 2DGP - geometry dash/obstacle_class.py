@@ -15,7 +15,7 @@ class OBSTACLE_TRIANGLE:
     def draw(self):
         if self.stage == 3:
             if (self.x-self.size/2 > self.camera_moving_degree-self.size and self.x + self.size/2):
-                self.image.comsite_draw(0,'v',self.x-self.camera_moving_degree, self.y, self.size, self.size)
+                self.image.composite_draw(0,'v',self.x-self.camera_moving_degree, self.y, self.size, self.size)
         else:
             if (self.x-self.size/2 > self.camera_moving_degree-self.size and self.x + self.size/2):
                 self.image.draw(self.x-self.camera_moving_degree, self.y, self.size, self.size)

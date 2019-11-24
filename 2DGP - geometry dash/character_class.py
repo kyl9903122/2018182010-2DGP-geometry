@@ -88,22 +88,40 @@ class Stop_State:
         timer -= game_framework.frame_time
         if timer <= 0:
             if timer <= 0:
-                game_framework.change_state(Stage2_state)
+                pass
+                # game_framework.change_state(Stage2_state)
         if character.is_jump:
-            character.Jump()
+            if character.stage == 3:
+                character.Reverse_Jump()
+            else:
+                character.Jump()
         else:
-            character.Fall()
-            if character.bottom <= 100:
-                character.y = 100 + character.size / 2
-                character.y = 100 + character.size / 2
-                character.is_jump = True
-                character.falling_velocity = 0
-                character.jumping_velocity = 400
+            if character.stage == 3:
+                character.Reverse_Fall()
+                print(character.y, )
+                if character.top >= 410:
+                    character.y = 410 - character.size / 2
+                    character.y = 410 - character.size / 2
+                    character.is_jump = True
+                    character.falling_velocity = 0
+                    character.jumping_velocity = 400
+            else:
+                character.Fall()
+                if character.bottom <= 100:
+                    character.y = 100 + character.size / 2
+                    character.y = 100 + character.size / 2
+                    character.is_jump = True
+                    character.falling_velocity = 0
+                    character.jumping_velocity = 400
 
     @staticmethod
     def draw(character):
-        character.image.clip_draw(0, 0, 117, 118, character.x - (character.GOAL_POINT - 694) + 130, character.y,
-                                  character.size, character.size)
+        if character.stage == 3:
+            character.image.composite_draw(0, 'hv', character.x, character.y,
+                                           character.size, character.size)
+        else:
+            character.image.clip_draw(0, 0, 117, 118, character.x - (character.GOAL_POINT - 694) + 130, character.y,
+                                      character.size, character.size)
 
 
 ##########################################################################################################################
@@ -238,6 +256,7 @@ class Reverse_Run_State:
     @staticmethod
     def draw(character):
         if character.map_stop:
+            print("character.x: ", character.x)
             character.image.composite_draw(0, 'hv', character.x, character.y, character.size, character.size)
         else:
             character.image.composite_draw(0, 'hv', 1020 - 130, character.y, character.size, character.size)
@@ -280,6 +299,7 @@ class CHARACTER:
         self.cur_state.enter(self, None)
         self.REVERSE_POS = [3793.651009301344, 5618.495640911652, 7305.081099476411, 8069.334514486767]
         self.GOAL_POINT = 0
+        self.stage = 0
 
     def Jump(self):
         self.y += self.jumping_velocity * game_framework.frame_time
@@ -293,9 +313,7 @@ class CHARACTER:
     def Reverse_Jump(self):
         self.y -= self.jumping_velocity * game_framework.frame_time
         self.jumping_velocity -= 30
-
         if self.jumping_velocity < 0:
-            print(self.jumping_velocity)
             self.is_jump, self.jumping_velocity = False, 650
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
@@ -351,7 +369,7 @@ class CHARACTER:
             self.Fall()
 
     def Reverse_Move(self):
-        self.x = self.moving_degree + 1020-130
+        self.x = self.moving_degree + 1020 - 130
         self.left, self.right = self.x - self.size / 2, self.x + self.size / 2
         if self.is_jump:
             self.Reverse_Jump()

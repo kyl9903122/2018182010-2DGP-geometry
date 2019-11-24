@@ -40,7 +40,7 @@ def enter():
     background.image_1 = load_image('background2.png')
     background.image_2 = load_image('background2.png')
     background.image_3 = load_image('background2.png')
-    background.stage = 3
+    background.stage = 2
     tiles, rectangle_obstacles = [], []
     character = character_class.CHARACTER()
     character.GOAL_POINT = 9903.68660381633

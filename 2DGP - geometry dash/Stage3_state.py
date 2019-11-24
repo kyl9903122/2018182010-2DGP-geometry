@@ -56,6 +56,8 @@ def enter():
     camera_x = WORD_END_X - 1020
     map_stop = False
     ReadPos()
+    for triangle in triangle_obstacles:
+        triangle.stage = 3
     character.tiles, character.obstacles = tiles, triangle_obstacles
     stop = 0
     game_world.add_object(background, 0)
@@ -112,7 +114,7 @@ def update():
         game_speed += RUN_SPEED_PPS
         # speed 만큼 카메라가 이동하였다.
         camera_x -= game_speed * game_framework.frame_time
-        if camera_x <= 980:
+        if camera_x <= 3:
             map_stop = True
         InputGame_SpeedORCamera_Moveing_Degree()
         # 시간이 지날수록 속도 빨라지게

@@ -12,7 +12,7 @@ class BACKGROUND:
         self.bgm.set_volume(30)
         self.bgm.repeat_play()
         self.game_speed = 0
-        self.stage = 0
+        self.stage = 1
 
     def Move(self):
         if self.pivot_1_x <= -255:
