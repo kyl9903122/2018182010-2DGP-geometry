@@ -9,7 +9,6 @@ class GameState:
         self.draw = state.draw
 
 
-
 class TestGameState:
 
     def __init__(self, name):
@@ -40,7 +39,7 @@ class TestGameState:
 
 running = None
 stack = None
-
+cur_stage = 1
 
 def change_state(state):
     global stack
@@ -114,3 +113,7 @@ def test_game_framework():
 
 if __name__ == '__main__':
     test_game_framework()
+
+
+def stage():
+    return None

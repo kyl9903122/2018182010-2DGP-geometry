@@ -1,8 +1,7 @@
 from pico2d import *
 import game_framework
-import title_state
+import Change_Stage_state
 
-import Stage2_state
 
 GET_OFF_POS = 8900
 
@@ -88,8 +87,8 @@ class Stop_State:
         timer -= game_framework.frame_time
         if timer <= 0:
             if timer <= 0:
-                pass
-                # game_framework.change_state(Stage2_state)
+                Change_Stage_state.next_stage = character.stage + 1
+                game_framework.change_state(Change_Stage_state)
         if character.is_jump:
             if character.stage == 3:
                 character.Reverse_Jump()

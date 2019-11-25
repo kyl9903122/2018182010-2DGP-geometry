@@ -1,15 +1,16 @@
 import game_framework
 from pico2d import *
 import Stage1_state
-
+import Stage2_state
+import Stage3_state
 
 name = "TitleState"
 image = None
-
+cur_stage = 0
 
 def enter():
-    global image
-    image = load_image('title2.png')
+    global image, cut_stage
+    image = load_image('fail.png')
     pass
 
 
@@ -26,7 +27,12 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_SPACE:
-                game_framework.change_state(Stage1_state)
+                if game_framework.cur_stage == 1:
+                    game_framework.change_state(Stage1_state)
+                elif game_framework.cur_stage == 2:
+                    game_framework.change_state(Stage2_state)
+                elif game_framework.cur_stage == 3:
+                    game_framework.change_state(Stage3_state)
             elif event.key == SDLK_ESCAPE:
                 game_framework.quit()
     pass

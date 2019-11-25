@@ -26,12 +26,12 @@ class BACKGROUND:
         self.pivot_3_x -= self.game_speed
 
     def Reverse_Move(self):
-        if self.pivot_1_x >= 1020+251:
-            self.pivot_1_x = -255
-        if self.pivot_2_x >= 1020+251:
-            self.pivot_2_x = -255
-        if self.pivot_3_x >= 1020+251:
-            self.pivot_3_x = -255
+        if self.pivot_1_x >= 1020+255:
+            self.pivot_1_x = self.pivot_2_x-510
+        if self.pivot_2_x >= 1020+255:
+            self.pivot_2_x = self.pivot_3_x -  510
+        if self.pivot_3_x >= 1020+255:
+            self.pivot_3_x = self.pivot_1_x-510
         self.pivot_1_x += self.game_speed
         self.pivot_2_x += self.game_speed
         self.pivot_3_x += self.game_speed

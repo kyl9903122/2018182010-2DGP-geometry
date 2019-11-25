@@ -5,6 +5,7 @@ import maptool_state
 import game_world
 
 import title_state
+import fail_state
 import character_class
 import background_class
 import tile_class
@@ -110,7 +111,8 @@ def update():
         for game_object in game_world.all_objects():
             game_object.update()
         if character.is_death:
-            game_framework.change_state(title_state)
+            fail_state.cur_stage = 1
+            game_framework.change_state(fail_state)
 
 
 def draw():
