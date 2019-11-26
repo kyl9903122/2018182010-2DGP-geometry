@@ -95,7 +95,7 @@ def handle_events():
                 down_p_count += 1
                 if down_p_count % 2 == 1:
                     temp_speed = game_speed
-                    # game_speed = 800
+                    game_speed = 1000
                     character.handle_event(event)
                     ufo.handle_event(event)
                 else:
@@ -125,6 +125,7 @@ def update():
             game_object.update()
         if character.is_death or ufo.collide:
             fail_state.cur_stage = 2
+            background.bgm.stop()
             game_framework.change_state(fail_state)
 
 

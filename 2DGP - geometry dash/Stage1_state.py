@@ -112,6 +112,7 @@ def update():
             game_object.update()
         if character.is_death:
             fail_state.cur_stage = 1
+            background.bgm.stop()
             game_framework.change_state(fail_state)
 
 

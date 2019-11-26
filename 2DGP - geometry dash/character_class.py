@@ -87,7 +87,6 @@ class Stop_State:
         timer -= game_framework.frame_time
         if timer <= 0:
             if timer <= 0:
-                Change_Stage_state.next_stage = character.stage + 1
                 game_framework.change_state(Change_Stage_state)
         if character.is_jump:
             if character.stage == 3:
@@ -97,7 +96,6 @@ class Stop_State:
         else:
             if character.stage == 3:
                 character.Reverse_Fall()
-                print(character.y, )
                 if character.top >= 410:
                     character.y = 410 - character.size / 2
                     character.y = 410 - character.size / 2
