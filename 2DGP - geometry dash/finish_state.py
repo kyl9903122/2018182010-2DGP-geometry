@@ -1,6 +1,7 @@
 import game_framework
 from pico2d import *
 import title_state
+import character_class
 
 
 name = "Finish State"

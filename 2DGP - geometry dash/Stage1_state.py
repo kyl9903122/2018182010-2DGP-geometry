@@ -33,10 +33,11 @@ camera_moving_degree_x = 0
 stop = 0
 down_p_count = 0
 map_stop = False
+finish_timer = 0.5
 
 
 def enter():
-    global character, background, tiles, triangle_obstacles
+    global character, background, tiles, triangle_obstacles, finish_timer
     background = background_class.BACKGROUND()
     background.stage = 1
     triangle_obstacles = []
@@ -54,6 +55,7 @@ def enter():
     game_world.add_object(character, 1)
     game_world.add_objects(tiles, 1)
     game_world.add_objects(triangle_obstacles, 1)
+    finish_timer = 0.5
 
 
 def exit():
@@ -99,8 +101,8 @@ def handle_events():
 
 
 def update():
-    global game_speed, camera_moving_degree_x, map_stop
-    if stop & 2 == 0:
+    global game_speed, camera_moving_degree_x, map_stop, finish_timer, stop
+    if stop % 2 == 0:
         game_speed += RUN_SPEED_PPS
         # speed 만큼 카메라가 이동하였다.
         camera_moving_degree_x += game_speed * game_framework.frame_time
@@ -110,19 +112,23 @@ def update():
         # 시간이 지날수록 속도 빨라지게
         for game_object in game_world.all_objects():
             game_object.update()
-        if character.is_death:
-            fail_state.cur_stage = 1
-            background.bgm.stop()
+    if character.is_death:
+        fail_state.cur_stage = 1
+        background.bgm.stop()
+        finish_timer -= game_framework.frame_time
+        stop = 1
+        if finish_timer < 0:
             game_framework.change_state(fail_state)
 
 
+
 def draw():
-    if stop & 2 == 0:
-        clear_canvas()
-        for game_object in game_world.all_objects():
-            game_object.draw()
-        update_canvas()
-        delay(0.01)
+
+    clear_canvas()
+    for game_object in game_world.all_objects():
+        game_object.draw()
+    update_canvas()
+    delay(0.01)
     pass
 
 

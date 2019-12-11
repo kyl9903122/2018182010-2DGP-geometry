@@ -2,7 +2,6 @@ from pico2d import *
 import game_framework
 import Change_Stage_state
 
-
 GET_OFF_POS = 8900
 
 # Character Event
@@ -21,7 +20,10 @@ class Run_State:
     @staticmethod
     def enter(character, event):
         if event == MOUSE_DOWN:
-            character.is_jump = True
+            if character.jumping_cnt < 2:
+                character.is_jump = True
+            character.jumping_cnt += 1
+            character.angle = (character.angle - 90) % 360
         elif event == INVIHINCLE_KEY:
             if character.no_death:
                 character.no_death = False
@@ -61,7 +63,7 @@ class Run_State:
                                       character.size,
                                       character.size)
         else:
-            character.image.clip_draw(0, 0, 117, 118, 130, character.y, character.size, character.size)
+            character.image.composite_draw(character.angle / 360 * 2 * math.pi,'',130, character.y, character.size, character.size)
 
 
 ################################################################################################################
@@ -73,8 +75,9 @@ class Stop_State:
             character.is_jump = True
             character.jumping_velocity = 400
             character.falling_velocity = 0
+            character.success_sound.play()
         global timer
-        timer = 3
+        timer = 2
         pass
 
     @staticmethod
@@ -86,8 +89,8 @@ class Stop_State:
         global timer
         timer -= game_framework.frame_time
         if timer <= 0:
-            if timer <= 0:
-                game_framework.change_state(Change_Stage_state)
+            game_framework.change_state(Change_Stage_state)
+            character.success_sound.stop()
         if character.is_jump:
             if character.stage == 3:
                 character.Reverse_Jump()
@@ -297,6 +300,9 @@ class CHARACTER:
         self.REVERSE_POS = [3793.651009301344, 5618.495640911652, 7305.081099476411, 8069.334514486767]
         self.GOAL_POINT = 0
         self.stage = 0
+        self.jumping_cnt = 0
+        self.success_sound = load_music("success.wav")
+        self.angle = 0
 
     def Jump(self):
         self.y += self.jumping_velocity * game_framework.frame_time
@@ -321,11 +327,13 @@ class CHARACTER:
                 if tile.bottom <= self.bottom <= tile.top + 2:
                     self.y = tile.top + self.size / 2
                     self.falling_velocity = 0
+                    self.jumping_cnt = 0
                     return
             elif tile.left + 5 <= self.left <= tile.right < self.right:
                 if tile.bottom <= self.bottom <= tile.top + 2:
                     self.y = tile.top + self.size / 2
                     self.falling_velocity = 0
+                    self.jumping_cnt = 0
                     return
 
     def Reverse_Fall(self):
@@ -337,6 +345,7 @@ class CHARACTER:
                 if tile.top >= self.top >= tile.bottom - 2:
                     self.y = tile.bottom - self.size / 2
                     self.falling_velocity = 0
+                    self.jumping_cnt = 0
 
     def draw(self):
         self.cur_state.draw(self)
