@@ -25,6 +25,7 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 font = None
 character, background, tiles, rectangle_obstacles, ufo = None, None, None, None, None
+timer = 0.5
 isJump = False
 game_speed, temp_speed = 0, 0
 degree = 0
@@ -45,8 +46,8 @@ def enter():
     character = character_class.CHARACTER()
     character.GOAL_POINT = 9903.68660381633
     ufo = ufo_class.UFO()
-    global camera_moving_degree_x, stop, game_speed, map_stop
-    game_speed = 600.0
+    global camera_moving_degree_x, stop, game_speed, map_stop, timer
+    game_speed = 450.0
     camera_moving_degree_x = 0
     map_stop = False
     ReadPos()
@@ -61,6 +62,7 @@ def enter():
     game_world.add_object(ufo, 1)
     game_world.add_objects(tiles, 1)
     game_world.add_objects(rectangle_obstacles, 1)
+    timer = 0.5
 
 
 def exit():
@@ -109,9 +111,9 @@ def handle_events():
 
 
 def update():
-    global game_speed, camera_moving_degree_x, map_stop
-    if stop & 2 == 0:
-        game_speed += RUN_SPEED_PPS
+    global game_speed, camera_moving_degree_x, map_stop,stop, timer
+    if stop % 2 == 0:
+        game_speed += RUN_SPEED_PPS*0.1
         # speed 만큼 카메라가 이동하였다.
         camera_moving_degree_x += game_speed * game_framework.frame_time
         if camera_moving_degree_x >= WORD_END_X - 980:
@@ -123,19 +125,20 @@ def update():
         # 시간이 지날수록 속도 빨라지게
         for game_object in game_world.all_objects():
             game_object.update()
-        if character.is_death or ufo.collide:
-            fail_state.cur_stage = 2
-            background.bgm.stop()
+    if character.is_death or ufo.collide:
+        timer -= game_framework.frame_time
+        fail_state.cur_stage = 2
+        background.bgm.stop()
+        stop = 1
+        if timer < 0:
             game_framework.change_state(fail_state)
 
 
 def draw():
-    if stop & 2 == 0:
-        clear_canvas()
-        for game_object in game_world.all_objects():
-            game_object.draw()
-        update_canvas()
-        delay(0.01)
+    clear_canvas()
+    for game_object in game_world.all_objects():
+        game_object.draw()
+    update_canvas()
     pass
 
 

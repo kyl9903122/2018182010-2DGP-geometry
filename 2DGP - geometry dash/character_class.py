@@ -73,7 +73,7 @@ class Stop_State:
     def enter(character, event):
         if event == FINISH_STAGE:
             character.is_jump = True
-            character.jumping_velocity = 400
+            character.jumping_velocity = 800
             character.falling_velocity = 0
             character.success_sound.play()
         global timer
@@ -104,7 +104,7 @@ class Stop_State:
                     character.y = 410 - character.size / 2
                     character.is_jump = True
                     character.falling_velocity = 0
-                    character.jumping_velocity = 400
+                    character.jumping_velocity = 800
             else:
                 character.Fall()
                 if character.bottom <= 100:
@@ -112,7 +112,7 @@ class Stop_State:
                     character.y = 100 + character.size / 2
                     character.is_jump = True
                     character.falling_velocity = 0
-                    character.jumping_velocity = 400
+                    character.jumping_velocity = 800
 
     @staticmethod
     def draw(character):
@@ -176,7 +176,7 @@ class Reverse_Fly_State:
         print("character reverse fly enter")
         if event == RIDE_UFO:
             character.size = 40
-            character.y = character.ufo.y + 35
+            character.y = character.ufo.y - 35
         elif event == INVIHINCLE_KEY:
             if character.no_death:
                 character.no_death = False
@@ -283,7 +283,7 @@ class CHARACTER:
         self.image = load_image('character.png')
         self.x, self.y = 130, 500
         self.size = 50
-        self.jumping_velocity, self.falling_velocity, self.is_death = 650, 0, False
+        self.jumping_velocity, self.falling_velocity, self.is_death = 800, 0, False
         self.map_stop = 0
         self.top, self.bottom, self.left, self.right = self.y + self.size / 2, self.y - self.size / 2, self.x - self.size / 2, self.x + self.size / 2
         self.tiles = []
@@ -306,18 +306,19 @@ class CHARACTER:
 
     def Jump(self):
         self.y += self.jumping_velocity * game_framework.frame_time
-        self.jumping_velocity -= 30
+        self.jumping_velocity -= 11
+        self.falling_velocity = 0
 
         if self.jumping_velocity < 0:
             print(self.jumping_velocity)
-            self.is_jump, self.jumping_velocity = False, 650
+            self.is_jump, self.jumping_velocity = False, 800
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
     def Reverse_Jump(self):
         self.y -= self.jumping_velocity * game_framework.frame_time
-        self.jumping_velocity -= 30
+        self.jumping_velocity -= 8
         if self.jumping_velocity < 0:
-            self.is_jump, self.jumping_velocity = False, 650
+            self.is_jump, self.jumping_velocity = False, 800
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
     def Fall(self):
@@ -338,7 +339,7 @@ class CHARACTER:
 
     def Reverse_Fall(self):
         self.y -= self.falling_velocity * game_framework.frame_time
-        self.falling_velocity -= 15
+        self.falling_velocity -= 5
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
         for tile in self.tiles:
             if self.ColisionCheckWithTile(tile):
@@ -418,5 +419,5 @@ class CHARACTER:
 
     def Down(self):
         self.y += self.falling_velocity * game_framework.frame_time
-        self.falling_velocity -= 15
+        self.falling_velocity -= 5
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2

@@ -15,7 +15,7 @@ name = "State1 state"
 
 WORD_END_X = 7440.704599999951
 
-PIXEL_PER_METER = (3.0/1.0)
+PIXEL_PER_METER = (1.0/10.0)
 RUN_SPEED_KMPH = 0.01
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
@@ -45,7 +45,7 @@ def enter():
     character = character_class.CHARACTER()
     character.GOAL_POINT = 7190
     global camera_moving_degree_x, stop, game_speed, map_stop
-    game_speed = 250.0
+    game_speed = 350.0
     camera_moving_degree_x = 0
     map_stop = False
     ReadPos()
@@ -123,12 +123,10 @@ def update():
 
 
 def draw():
-
     clear_canvas()
     for game_object in game_world.all_objects():
         game_object.draw()
     update_canvas()
-    delay(0.01)
     pass
 
 

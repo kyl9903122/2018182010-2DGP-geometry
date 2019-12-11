@@ -32,10 +32,11 @@ camera_x = WORD_END_X
 stop = 0
 down_p_count = 0
 map_stop = False
+timer = 0.5
 
 
 def enter():
-    global character, background, tiles, triangle_obstacles
+    global character, background, tiles, triangle_obstacles, timer
     background = background_class.BACKGROUND()
     background.image_1 = load_image('background3.png')
     background.image_2 = load_image('background3.png')
@@ -52,7 +53,7 @@ def enter():
     character.GOAL_POINT = 130
     character.cur_state = character_class.Reverse_Run_State
     global camera_x, stop, game_speed, map_stop
-    game_speed = 600.0
+    game_speed = 700.0
     camera_x = WORD_END_X - 1020
     map_stop = False
     ReadPos()
@@ -64,6 +65,7 @@ def enter():
     game_world.add_object(character, 1)
     game_world.add_objects(tiles, 1)
     game_world.add_objects(triangle_obstacles, 1)
+    timer = 0.5
 
 
 def exit():
@@ -109,8 +111,8 @@ def handle_events():
 
 
 def update():
-    global game_speed, camera_x, map_stop
-    if stop & 2 == 0:
+    global game_speed, camera_x, map_stop,stop,timer
+    if stop % 2 == 0:
         game_speed += RUN_SPEED_PPS
         # speed 만큼 카메라가 이동하였다.
         camera_x -= game_speed * game_framework.frame_time
@@ -120,9 +122,12 @@ def update():
         # 시간이 지날수록 속도 빨라지게
         for game_object in game_world.all_objects():
             game_object.update()
-        if character.is_death:
-            fail_state.cur_stage = 3
-            background.bgm.stop()
+    if character.is_death:
+        timer -= game_framework.frame_time
+        fail_state.cur_stage = 3
+        background.bgm.stop()
+        stop = 1
+        if timer < 0:
             game_framework.change_state(fail_state)
 
 
@@ -132,7 +137,6 @@ def draw():
         for game_object in game_world.all_objects():
             game_object.draw()
         update_canvas()
-        delay(0.01)
     pass
 
 

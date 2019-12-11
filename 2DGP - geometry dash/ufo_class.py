@@ -239,10 +239,10 @@ class UFO:
 
     def Up(self):
         self.y -= self.velocity * game_framework.frame_time
-        self.velocity -= 15
+        self.velocity -= 5
         self.top, self.bottom = self.y + self.size_y / 2, self.y - self.size_y / 2
 
     def Down(self):
         self.y += self.velocity * game_framework.frame_time
-        self.velocity -= 15
+        self.velocity -= 5
         self.top, self.bottom = self.y + self.size_y / 2, self.y - self.size_y / 2
