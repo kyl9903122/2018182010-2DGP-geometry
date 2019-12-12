@@ -11,6 +11,12 @@ key_event_table = {
     (SDL_KEYDOWN, SDLK_p): INVIHINCLE_KEY
 }
 
+PIXEL_PER_METER = (1.0/10.0)
+RUN_SPEED_KMPH = 160
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
 
 class Stop_State:
     @staticmethod
@@ -239,10 +245,10 @@ class UFO:
 
     def Up(self):
         self.y -= self.velocity * game_framework.frame_time
-        self.velocity -= 5
+        self.velocity -= RUN_SPEED_PPS
         self.top, self.bottom = self.y + self.size_y / 2, self.y - self.size_y / 2
 
     def Down(self):
         self.y += self.velocity * game_framework.frame_time
-        self.velocity -= 5
+        self.velocity -= RUN_SPEED_PPS
         self.top, self.bottom = self.y + self.size_y / 2, self.y - self.size_y / 2

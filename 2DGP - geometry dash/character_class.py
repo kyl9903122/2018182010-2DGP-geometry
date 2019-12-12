@@ -13,6 +13,16 @@ key_event_table = {
     (SDL_KEYDOWN, SDLK_p): INVIHINCLE_KEY
 }
 
+PIXEL_PER_METER = (1.0 / 10.0)
+RUN_SPEED_KMPH = 600
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
+JMP_FRAME = 18
+JMP_DEV = 80
+JMP_VEL = RUN_SPEED_PPS * JMP_FRAME / JMP_DEV
+
 
 ###################################################################################################
 
@@ -23,6 +33,8 @@ class Run_State:
             if character.jumping_cnt < 2:
                 character.is_jump = True
             character.jumping_cnt += 1
+            character.jumping_velocity = JMP_VEL
+            character.falling_velocity = 0
             character.angle = (character.angle - 90) % 360
         elif event == INVIHINCLE_KEY:
             if character.no_death:
@@ -63,7 +75,8 @@ class Run_State:
                                       character.size,
                                       character.size)
         else:
-            character.image.composite_draw(character.angle / 360 * 2 * math.pi,'',130, character.y, character.size, character.size)
+            character.image.composite_draw(character.angle / 360 * 2 * math.pi, '', 130, character.y, character.size,
+                                           character.size)
 
 
 ################################################################################################################
@@ -73,7 +86,7 @@ class Stop_State:
     def enter(character, event):
         if event == FINISH_STAGE:
             character.is_jump = True
-            character.jumping_velocity = 800
+            character.jumping_velocity = RUN_SPEED_PPS * JMP_FRAME
             character.falling_velocity = 0
             character.success_sound.play()
         global timer
@@ -218,7 +231,11 @@ class Reverse_Run_State:
     @staticmethod
     def enter(character, event):
         if event == MOUSE_DOWN:
-            character.is_jump = True
+            if character.jumping_cnt < 2:
+                character.is_jump = True
+                character.jumping_cnt += 1
+                character.jumping_velocity = JMP_VEL
+                character.falling_velocity = 0
         elif event == INVIHINCLE_KEY:
             if character.no_death:
                 character.no_death = False
@@ -283,7 +300,7 @@ class CHARACTER:
         self.image = load_image('character.png')
         self.x, self.y = 130, 500
         self.size = 50
-        self.jumping_velocity, self.falling_velocity, self.is_death = 800, 0, False
+        self.jumping_velocity, self.falling_velocity, self.is_death = JMP_VEL, 0, False
         self.map_stop = 0
         self.top, self.bottom, self.left, self.right = self.y + self.size / 2, self.y - self.size / 2, self.x - self.size / 2, self.x + self.size / 2
         self.tiles = []
@@ -303,22 +320,25 @@ class CHARACTER:
         self.jumping_cnt = 0
         self.success_sound = load_music("success.wav")
         self.angle = 0
+        self.jmp_frame_time = game_framework.frame_time
 
     def Jump(self):
-        self.y += self.jumping_velocity * game_framework.frame_time
-        self.jumping_velocity -= 11
+        self.y += self.jumping_velocity
+        self.jumping_velocity -= RUN_SPEED_PPS * game_framework.frame_time
         self.falling_velocity = 0
+        print("jmp_vel: ",self.jumping_velocity)
 
         if self.jumping_velocity < 0:
             print(self.jumping_velocity)
-            self.is_jump, self.jumping_velocity = False, 800
+            self.is_jump, self.jumping_velocity = False, JMP_VEL
+            print("jumping veloc : ", self.jumping_velocity)
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
     def Reverse_Jump(self):
-        self.y -= self.jumping_velocity * game_framework.frame_time
-        self.jumping_velocity -= 8
+        self.y -= self.jumping_velocity
+        self.jumping_velocity -= RUN_SPEED_PPS* game_framework.frame_time
         if self.jumping_velocity < 0:
-            self.is_jump, self.jumping_velocity = False, 800
+            self.is_jump, self.jumping_velocity = False, JMP_VEL
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
 
     def Fall(self):
@@ -339,7 +359,7 @@ class CHARACTER:
 
     def Reverse_Fall(self):
         self.y -= self.falling_velocity * game_framework.frame_time
-        self.falling_velocity -= 5
+        self.falling_velocity -= RUN_SPEED_PPS
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
         for tile in self.tiles:
             if self.ColisionCheckWithTile(tile):
@@ -419,5 +439,5 @@ class CHARACTER:
 
     def Down(self):
         self.y += self.falling_velocity * game_framework.frame_time
-        self.falling_velocity -= 5
+        self.falling_velocity -= RUN_SPEED_PPS
         self.top, self.bottom = self.y + self.size / 2, self.y - self.size / 2
